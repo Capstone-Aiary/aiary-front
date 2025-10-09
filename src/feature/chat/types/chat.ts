@@ -1,15 +1,21 @@
-export type Chat = {
-  id: string;                
-  chatRoomId: string;        
-  senderId: string;          
-  senderName: string;        
-  content: string;           
+export interface Chat {
+  id: string;
+  threadId: string;
+  senderId: string;
+  senderName: string;
+  content: string;
   createdAt: string;
-  isMe: boolean;
-};
-
-export type ChatListPage = {
-	items: Chat[];
-	nextCursor?: string;
+  isMe?: boolean;            
+  isStreaming?: boolean;     
+  isError?: boolean;         
 }
-export type ChatSSEMessage = Chat;
+
+export interface ChatListPage {
+  items: Chat[];
+  nextCursor?: string | null;
+}
+
+export interface ChatListResponse {
+  pages: ChatListPage[];
+  pageParams: (string | undefined)[];
+}

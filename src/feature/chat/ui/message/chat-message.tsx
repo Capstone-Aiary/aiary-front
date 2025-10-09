@@ -9,6 +9,8 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ item }: ChatMessageProps) {
+  const isAI = !item.isMe;
+
   return (
     <View
       style={[
@@ -18,13 +20,18 @@ function ChatMessage({ item }: ChatMessageProps) {
         },
       ]}
     >
+      {isAI && (
+        <View style={styles.aiAvatar}>
+          <Text style={styles.aiAvatarText}>🤖</Text>
+        </View>
+      )}
       <View
         style={[
           styles.balloonContainer,
           { alignItems: item.isMe ? "flex-end" : "flex-start" },
         ]}
       >
-        <ChatBalloon isMe={item.isMe} message={item.content} />
+        <ChatBalloon isMe={item.isMe ?? false} message={item.content} />
         <View
           style={[
             styles.infoContainer,
@@ -41,21 +48,32 @@ function ChatMessage({ item }: ChatMessageProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    gap: 10,
+    gap: 8,
     alignItems: "flex-start",
   },
+  aiAvatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    backgroundColor: "#00D9D4",
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 4,
+  },
+  aiAvatarText: {
+    fontSize: 18,
+  },
   balloonContainer: {
-    gap: 5,
+    gap: 4,
     flex: 1,
   },
   time: {
-    color: "#9A93AA",
-    fontSize: 12,
-    lineHeight: 17,
+    color: "#B5B5B5",
+    fontSize: 11,
+    lineHeight: 16,
   },
   infoContainer: {
-    gap: 5,
-
+    gap: 4,
     alignItems: "center",
     flexDirection: "row",
   },

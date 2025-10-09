@@ -8,19 +8,13 @@ import Animated, {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChatList from "./chat-list";
 import ChatRoomHeader from "./chat-room-header";
-import DateDivider from "./date-divider";
 import ChatInput from "./input";
 
 function ChatDetail() {
   const insets = useSafeAreaInsets();
-
   const { id } = useLocalSearchParams<{ id: string }>();
-  const year = new Date().getFullYear();
-  const month = new Date().getMonth() + 1;
-  const day = new Date().getDate();
-  const date = `${year}년 ${month}월 ${day}일`;
-  const keyboard = useAnimatedKeyboard();
 
+  const keyboard = useAnimatedKeyboard();
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
@@ -48,19 +42,14 @@ function ChatDetail() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: "#FAFAFA",
+            backgroundColor: "#F5F5F7",
             alignContent: "center",
             justifyContent: "center",
           },
           animatedStyles,
         ]}
       >
-        <>
-          <View style={{ height: 15 }} />
-          <DateDivider date={date} />
-        </>
         <ChatList />
-
         <ChatInput />
       </Animated.View>
     </View>

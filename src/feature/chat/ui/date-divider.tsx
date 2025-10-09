@@ -9,17 +9,16 @@ const DateDivider = ({ date }: { date: string }) => (
 const styles = StyleSheet.create({
   dateDividerContainer: {
     alignItems: "center",
-    marginVertical: 5,
+    marginVertical: 8,
   },
   dateText: {
-    fontSize: 13,
-    color: "#898A8D",
+    fontSize: 12,
+    color: "#9E9E9E",
     fontWeight: "400",
-
-    paddingHorizontal: 9,
-    paddingVertical: 4,
-    backgroundColor: "#fff",
-    borderRadius: 20,
+    paddingHorizontal: 12,
+    paddingVertical: 5,
+    backgroundColor: "#ECECEC",
+    borderRadius: 12,
   },
 });
 

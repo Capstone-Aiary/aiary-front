@@ -1,5 +1,4 @@
 import { useLocalSearchParams } from "expo-router";
-import type React from "react";
 import { useCallback, useState } from "react";
 import {
   Platform,
@@ -14,13 +13,13 @@ import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from "react-native-reanimated";
+import { chatApi } from "../services/chat-api";
+import { chatSSEService } from "../services/chatSSEService";
 
 function ChatInput() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-
+  const { id: threadId } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
-
   const keyboard = useAnimatedKeyboard();
 
   const animatedKeyboardStyles = useAnimatedStyle(() => ({
@@ -29,98 +28,83 @@ function ChatInput() {
   }));
 
   const handleSend = useCallback(async () => {
-    if (chat === "") {
-      return;
-    }
-
     const messageContent = chat.trim();
+    if (!messageContent) return;
     setChat("");
-
     try {
+      const newMessage = await chatApi.sendMessage(threadId, messageContent);
+      chatSSEService.broadcast(threadId, newMessage);
     } catch (error) {
       console.error("Message send error:", error);
     }
-  }, [chat, id]);
+  }, [chat, threadId]);
 
   return (
     <Animated.View
-      style={[styles.container, { width: width }, animatedKeyboardStyles]}
+      style={[styles.container, { width }, animatedKeyboardStyles]}
     >
       <View style={styles.inputContainer}>
         <TextInput
-          multiline={true}
+          multiline
           value={chat}
-          onChangeText={(text) => setChat(text)}
+          onChangeText={setChat}
           style={styles.textInput}
-          placeholder={"메세지를 입력하세요"}
+          placeholder="오늘 하루는 어땠나요?"
+          placeholderTextColor="#B5B5B5"
           numberOfLines={3}
         />
-        {chat !== "" ? (
-          <Pressable onPress={handleSend} style={styles.send}>
-            <Text>전송</Text>
-          </Pressable>
-        ) : (
-          <View style={{ width: 32, height: 32 }} />
-        )}
+        <Pressable onPress={handleSend} style={styles.send}>
+          <Text style={styles.sendIcon}>➤</Text>
+        </Pressable>
       </View>
     </Animated.View>
   );
 }
 
 const styles = StyleSheet.create({
-  textInput: {
-    flex: 1,
-    alignSelf: "center",
-    fontSize: 16,
-    lineHeight: 18,
-    marginVertical: 14,
-    letterSpacing: -0.042,
-    paddingHorizontal: 10,
-    ...(Platform.OS === "android"
-      ? { textAlignVertical: "center" }
-      : { paddingVertical: 0 }),
-    color: "#1E2229",
-  },
-  inputContainer: {
-    flex: 1,
-    minHeight: 47,
-    marginLeft: 12,
-    marginRight: 4,
-    position: "relative",
-    flexDirection: "row",
-
-    alignItems: "center",
-    borderRadius: 24,
-    backgroundColor: "#F8F9FA",
-    paddingHorizontal: 8,
-  },
   container: {
-    minHeight: 70,
+    minHeight: 68,
     alignItems: "center",
     backgroundColor: "#fff",
     flexDirection: "row",
-    paddingVertical: 12,
-
+    paddingVertical: 10,
     paddingHorizontal: 16,
+    borderTopWidth: 1,
+    borderTopColor: "#E5E5E5",
   },
-  photoButton: {
-    width: 32,
-    height: 32,
-    justifyContent: "center",
+  inputContainer: {
+    flex: 1,
+    minHeight: 48,
+    flexDirection: "row",
     alignItems: "center",
-    borderRadius: 9999,
-    backgroundColor: "#F3EDFF",
+    borderRadius: 24,
+    backgroundColor: "#F5F5F7",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+  },
+  textInput: {
+    flex: 1,
+    fontSize: 15,
+    lineHeight: 20,
+    paddingHorizontal: 4,
+    ...(Platform.OS === "android"
+      ? { textAlignVertical: "center" }
+      : { paddingVertical: 8 }),
+    color: "#000",
   },
   send: {
-    width: 32,
-    marginVertical: 8,
-    height: 32,
+    width: 36,
+    height: 36,
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 9999,
-    alignSelf: "flex-end",
-    textAlignVertical: "top",
-    backgroundColor: "#7A4AE1",
+    borderRadius: 18,
+    backgroundColor: "#00CEC8",
+    marginLeft: 8,
+  },
+  sendIcon: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "600",
   },
 });
 

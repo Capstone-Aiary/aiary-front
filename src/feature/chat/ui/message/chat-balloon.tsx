@@ -6,19 +6,15 @@ interface ChatBalloonProps {
   isMe: boolean;
 }
 
-function ChatBalloon({
-  message,
-
-  isMe,
-}: ChatBalloonProps) {
+function ChatBalloon({ message, isMe }: ChatBalloonProps) {
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: isMe ? "#7A4AE1" : "#fff",
-          borderTopRightRadius: isMe ? 6 : 18,
-          borderTopLeftRadius: !isMe ? 6 : 18,
+          backgroundColor: isMe ? "#5B5FED" : "#fff",
+          borderTopRightRadius: isMe ? 4 : 18,
+          borderTopLeftRadius: !isMe ? 4 : 18,
         },
       ]}
     >
@@ -32,8 +28,8 @@ function ChatBalloon({
 const styles = StyleSheet.create({
   container: {
     maxWidth: "70%",
-    paddingHorizontal: 15,
-    paddingVertical: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
     borderRadius: 18,
     ...Platform.select({
       ios: {
@@ -42,68 +38,18 @@ const styles = StyleSheet.create({
           width: 0,
           height: 1,
         },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
+        shadowOpacity: 0.08,
+        shadowRadius: 3,
       },
-
       android: {
-        elevation: 3,
+        elevation: 2,
       },
     }),
   },
   messageText: {
-    fontSize: 14,
-    fontWeight: 400,
-    lineHeight: 21,
-  },
-  image: {
-    width: 240,
-    height: 240,
-    borderRadius: 12,
-  },
-  loadingContainer: {
-    width: 240,
-    height: 240,
-    borderRadius: 12,
-    backgroundColor: "#F5F5F5",
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  loadingText: {
-    fontSize: 14,
-    color: "#9A93AA",
+    fontSize: 15,
     fontWeight: "400",
-  },
-  imageContainer: {
-    position: "relative",
-  },
-  uploadIndicator: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    backgroundColor: "rgba(0, 0, 0, 0.7)",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  uploadText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "500",
-  },
-  errorIndicator: {
-    position: "absolute",
-    bottom: 8,
-    right: 8,
-    backgroundColor: "#FF3B30",
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 12,
-  },
-  errorText: {
-    color: "#fff",
-    fontSize: 12,
-    fontWeight: "500",
+    lineHeight: 22,
   },
 });
 
