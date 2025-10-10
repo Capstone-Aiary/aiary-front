@@ -1,3 +1,4 @@
+import SharedHeader from "@/src/shared/ui/shared-header";
 import React from "react";
 import {
   ScrollView,
@@ -12,24 +13,21 @@ const DiaryDetailScreen = () => {
   const insets = useSafeAreaInsets();
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.menuButton}>
-          <Text style={styles.menuIcon}>☰</Text>
-        </TouchableOpacity>
-        <View style={styles.headerTitle}>
-          <Text style={styles.homeIcon}>🏠</Text>
-        </View>
-        <TouchableOpacity style={styles.settingsButton}>
-          <Text style={styles.settingsIcon}>⚙️</Text>
-        </TouchableOpacity>
-      </View>
+      <SharedHeader>
+        <>
+          <SharedHeader.Side>
+            <SharedHeader.Menu />
+          </SharedHeader.Side>
+          <SharedHeader.Title title="일기" />
+          <SharedHeader.Side>
+            <SharedHeader.Setting />
+          </SharedHeader.Side>
+        </>
+      </SharedHeader>
 
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
-        {/* Title */}
         <Text style={styles.title}>오늘 하루의 소중한 기록</Text>
 
-        {/* Diary Content Card */}
         <View style={styles.diaryCard}>
           <Text style={styles.diaryText}>
             오늘은 정말 특별한 하루였다. 아침에 일어나서 창문을 열었을 때 들어온
@@ -59,7 +57,6 @@ const DiaryDetailScreen = () => {
           </View>
         </View>
 
-        {/* Action Buttons */}
         <TouchableOpacity style={styles.primaryButton}>
           <Text style={styles.primaryButtonIcon}>+</Text>
           <Text style={styles.primaryButtonText}>새 채팅 시작하기</Text>
