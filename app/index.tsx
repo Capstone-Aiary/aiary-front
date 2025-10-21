@@ -1,5 +1,10 @@
 import Navigation from "@/src/feature/home/ui/navigation";
+import { useCurrentWeather } from "@/src/shared/hooks/use-current-weather";
 import SharedHeader from "@/src/shared/ui/shared-header";
+import {
+  getWeatherColor,
+  getWeatherTextColor,
+} from "@/src/shared/utils/weather";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import { useRouter } from "expo-router";
@@ -13,6 +18,17 @@ const HomeScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
   const todayFormat = dayjs().format("YYYY년 M월 D일 dddd");
+  const lat = 36.35;
+  const lon = 127.38;
+
+  const { data, isLoading, isError, error } = useCurrentWeather(lat, lon);
+
+  const backgroundColor = isLoading
+    ? "#FFFFFF"
+    : getWeatherColor(data?.description);
+  const textColor = isLoading
+    ? "#212121"
+    : getWeatherTextColor(data?.description);
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <SharedHeader>
@@ -31,9 +47,8 @@ const HomeScreen = () => {
         <View style={styles.greetingCard}>
           <View style={styles.greetingHeader}>
             <Text style={styles.greetingText}>안녕하세요! 👋</Text>
-            <View style={styles.sunnyBadge}>
-              <Text style={styles.sunnyIcon}>☀️</Text>
-              <Text style={styles.sunnyText}>맑음</Text>
+            <View style={[styles.badge, { backgroundColor }]}>
+              <Text style={[styles.weatherText]}>{data?.description}</Text>
             </View>
           </View>
           <Text style={styles.dateText}>{todayFormat}</Text>
@@ -127,7 +142,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "700",
   },
-  sunnyBadge: {
+  badge: {
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#FFF3E0",
@@ -139,9 +154,9 @@ const styles = StyleSheet.create({
   sunnyIcon: {
     fontSize: 16,
   },
-  sunnyText: {
+  weatherText: {
     fontSize: 14,
-    color: "#F57C00",
+
     fontWeight: "600",
   },
   dateText: {

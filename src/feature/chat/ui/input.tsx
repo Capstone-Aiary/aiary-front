@@ -15,6 +15,7 @@ import Animated, {
 } from "react-native-reanimated";
 import { chatApi } from "../services/chat-api";
 import { chatSSEService } from "../services/chatSSEService";
+import { Chat } from "../types/chat";
 
 function ChatInput() {
   const { id: threadId } = useLocalSearchParams<{ id: string }>();
@@ -31,11 +32,26 @@ function ChatInput() {
     const messageContent = chat.trim();
     if (!messageContent) return;
     setChat("");
+    const optimisticMessage: Chat = {
+      id: `temp-${Date.now()}`,
+      threadId: threadId,
+      content: messageContent,
+      createdAt: new Date().toISOString(),
+      senderName: "Me",
+      senderId: "my-user-id",
+      role: "user",
+    };
     try {
       const newMessage = await chatApi.sendMessage(threadId, messageContent);
-      chatSSEService.broadcast(threadId, newMessage);
+
+      chatSSEService.broadcast(threadId, optimisticMessage);
     } catch (error) {
       console.error("Message send error:", error);
+      chatSSEService.broadcast(threadId, {
+        ...optimisticMessage,
+        id: `error-${optimisticMessage.id}`,
+        isError: true,
+      });
     }
   }, [chat, threadId]);
 

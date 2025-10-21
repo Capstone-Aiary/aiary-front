@@ -5,7 +5,7 @@ export interface Chat {
   senderName: string;
   content: string;
   createdAt: string;
-  isMe?: boolean;            
+  role: string;
   isStreaming?: boolean;     
   isError?: boolean;         
 }

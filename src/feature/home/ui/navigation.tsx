@@ -1,12 +1,36 @@
+import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import { useCreateChat } from "../../chat/hooks/use-create-chat";
 
 function Navigation() {
   const router = useRouter();
+  const queryClient = useQueryClient();
+  type RouterPushParam = Parameters<typeof router.push>[0];
+  const mutation = useCreateChat({
+    onSuccess: (responseData) => {
+      console.log("스레드 생성 성공 ID:", responseData.threadId);
+      router.push(`/chat/${responseData.threadId}`);
+      queryClient.invalidateQueries({ queryKey: ["threads"] });
+    },
+    onError: (error) => {
+      console.error("스레드 생성 실패:", error.message);
+      return;
+    },
+  });
+  const handleNavigation = (path: RouterPushParam) => {
+    if (typeof path === "string" && path.startsWith("/chat")) {
+      mutation.mutate({ title: "오늘의 일기" });
+      return;
+    }
+    router.push(path);
+  };
+
   return NAVIGATION_LIST.map((item, index) => (
     <Pressable
-      onPress={() => router.push(item.path)}
+      key={index}
+      onPress={() => handleNavigation(item.path as RouterPushParam)}
       style={styles.featureCard}
     >
       <View style={[styles.iconContainer, styles[item.background]]}>
@@ -84,7 +108,7 @@ export default Navigation;
 
 const NAVIGATION_LIST = [
   {
-    path: "/chat",
+    path: "/chat/",
     icon: "💬",
     title: "Aiary - 채팅 시작하기",
     description: "오늘의 날씨와 날짜를 반영으로 AI와 함께 일기를 작성해보세요",

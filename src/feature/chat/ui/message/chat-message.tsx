@@ -9,14 +9,14 @@ interface ChatMessageProps {
 }
 
 function ChatMessage({ item }: ChatMessageProps) {
-  const isAI = !item.isMe;
-
+  const isAI = item.role !== "user";
+  const isMe = item.role === "user";
   return (
     <View
       style={[
         styles.container,
         {
-          flexDirection: item.isMe ? "row-reverse" : "row",
+          flexDirection: isMe ? "row-reverse" : "row",
         },
       ]}
     >
@@ -28,14 +28,14 @@ function ChatMessage({ item }: ChatMessageProps) {
       <View
         style={[
           styles.balloonContainer,
-          { alignItems: item.isMe ? "flex-end" : "flex-start" },
+          { alignItems: isMe ? "flex-end" : "flex-start" },
         ]}
       >
-        <ChatBalloon isMe={item.isMe ?? false} message={item.content} />
+        <ChatBalloon isMe={isMe ?? false} message={item.content} />
         <View
           style={[
             styles.infoContainer,
-            { flexDirection: item.isMe ? "row-reverse" : "row" },
+            { flexDirection: isMe ? "row-reverse" : "row" },
           ]}
         >
           <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>

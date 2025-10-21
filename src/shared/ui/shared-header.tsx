@@ -21,7 +21,7 @@ function PlaceHoder() {
 function BackButton() {
   const router = useRouter();
   return (
-    <Pressable onPress={() => router.back()} style={styles.backButton}>
+    <Pressable onPress={() => router.navigate("/")} style={styles.backButton}>
       <Text style={styles.backIcon}>←</Text>
     </Pressable>
   );

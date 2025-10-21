@@ -120,11 +120,14 @@ const styles = StyleSheet.create({
     fontWeight: "700",
     color: "#000",
     marginTop: 24,
+    marginLeft: 4,
     marginBottom: 8,
   },
   pageSubtitle: {
     fontSize: 14,
     color: "#999",
+    marginLeft: 4,
+
     marginBottom: 24,
   },
   section: {
