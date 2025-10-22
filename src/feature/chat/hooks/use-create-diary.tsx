@@ -9,7 +9,13 @@ interface CreateDiaryVariables {
 }
 
 interface CreateDiaryResponse {
-  diaryId: string;
+  id: string;
+  threadId: string;
+  title: string;
+  mood: string;
+  content: string;
+  summary: string;
+  createdAt: string;
 }
 
 interface ApiError {
@@ -50,7 +56,7 @@ export const useCreateDiary = (
   return useMutation<CreateDiaryResponse, Error, CreateDiaryVariables>({
     mutationFn: createDiary,
     onSuccess: (data) => {
-      router.push(`/diary/${data.diaryId}`);
+      router.push(`/diary/${data.id}`);
     },
     ...options,
   });
