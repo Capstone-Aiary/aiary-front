@@ -21,7 +21,7 @@ const createThread = async (
 
   try {
     const { data } = await axios.post<CreateThreadResponse>(
-      `http://localhost:8080${API_ENDPOINT}`,
+      `http://localhost:3000/api${API_ENDPOINT}`,
       variables
     );
     return data;

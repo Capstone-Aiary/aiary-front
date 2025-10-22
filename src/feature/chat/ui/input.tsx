@@ -13,16 +13,14 @@ import Animated, {
   useAnimatedKeyboard,
   useAnimatedStyle,
 } from "react-native-reanimated";
-import { chatApi } from "../services/chat-api";
-import { chatSSEService } from "../services/chatSSEService";
-import { Chat } from "../types/chat";
+import { useSendMessage } from "../hooks/use-send-message";
 
 function ChatInput() {
   const { id: threadId } = useLocalSearchParams<{ id: string }>();
   const { width } = useWindowDimensions();
   const [chat, setChat] = useState("");
   const keyboard = useAnimatedKeyboard();
-
+  const { mutate: sendMessage } = useSendMessage(threadId);
   const animatedKeyboardStyles = useAnimatedStyle(() => ({
     paddingBottom:
       Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
@@ -32,26 +30,11 @@ function ChatInput() {
     const messageContent = chat.trim();
     if (!messageContent) return;
     setChat("");
-    const optimisticMessage: Chat = {
-      id: `temp-${Date.now()}`,
-      threadId: threadId,
-      content: messageContent,
-      createdAt: new Date().toISOString(),
-      senderName: "Me",
-      senderId: "my-user-id",
-      role: "user",
-    };
-    try {
-      const newMessage = await chatApi.sendMessage(threadId, messageContent);
 
-      chatSSEService.broadcast(threadId, optimisticMessage);
+    try {
+      sendMessage(messageContent);
     } catch (error) {
       console.error("Message send error:", error);
-      chatSSEService.broadcast(threadId, {
-        ...optimisticMessage,
-        id: `error-${optimisticMessage.id}`,
-        isError: true,
-      });
     }
   }, [chat, threadId]);
 

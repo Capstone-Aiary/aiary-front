@@ -7,12 +7,10 @@ class ChatSSEService {
   private subscribers = new Map<string, Set<Callback>>();
   private eventSources = new Map<string, EventSource>();
   private pendingConnections = new Map<string, Promise<void>>();
-
+  private pendingMessages = new Map<string, Chat>(); 
   subscribe(threadId: string, callback: Callback): () => void {
-    console.log("SUBSCRIBE called for thread:", threadId);
     
     if (this.eventSources.has(threadId)) {
-      console.log("⚠️ Cleaning up existing connection");
       const existingSource = this.eventSources.get(threadId);
       existingSource?.close();
       this.eventSources.delete(threadId);
@@ -26,9 +24,7 @@ class ChatSSEService {
     threadCallbacks.add(callback);
 
     if (this.pendingConnections.has(threadId)) {
-      console.log("⏳ Connection already pending, waiting...");
       this.pendingConnections.get(threadId)!.then(() => {
-        console.log("✅ Pending connection resolved");
       });
       
       return this.createUnsubscribe(threadId, callback);
@@ -47,39 +43,64 @@ class ChatSSEService {
   }
 
   private async createConnection(threadId: string): Promise<void> {
-    console.log("CREATING NEW EventSource for:", threadId);
     
     return new Promise((resolve, reject) => {
       const eventSource = new EventSource(
-        `http://localhost:8080/chat/stream?threadId=${threadId}`
+        `http://localhost:3000/api/chat/stream?threadId=${threadId}`
       );
 
       this.eventSources.set(threadId, eventSource);
 
       eventSource.onopen = () => {
-        console.log("✅ EventSource opened successfully:", threadId);
         resolve();
       };
-
       eventSource.onmessage = (event) => {
-        if (event.data === "[DONE]") return;
+        if (event.data === "[DONE]") {
+          this.pendingMessages.delete(threadId);
+          return;
+        }
         
         try {
-          const msg: Chat = JSON.parse(event.data);
-          this.subscribers.get(threadId)?.forEach((cb) => cb(msg));
+          const chunk = JSON.parse(event.data);
+          
+          if (chunk.content) {
+            let currentMessage = this.pendingMessages.get(threadId);
+            
+            if (!currentMessage) {
+           
+              currentMessage = {
+                id: `temp-${Date.now()}`, 
+                threadId: threadId,
+                senderId: '',
+                senderName: '',
+                role: 'assistant',
+                content: chunk.content,
+                createdAt: new Date().toISOString()
+              };
+            } else {
+            
+              currentMessage = {
+                ...currentMessage,
+                content: (currentMessage.content || '') + chunk.content
+              };
+            }
+            
+            this.pendingMessages.set(threadId, currentMessage);
+            
+            this.subscribers.get(threadId)?.forEach((cb) => cb(currentMessage!));
+          }
+          
         } catch (error) {
           console.error("Error parsing message:", error);
         }
       };
 eventSource.onerror = (error) => {
-        console.error("❌ EventSource error:", threadId, error);
         
        
         if (error instanceof MessageEvent && error.data) {
           try {
             const errorData = JSON.parse(error.data);
             if (errorData.type === "IllegalStateException" && errorData.message === "thread finalized") {
-              console.warn(`🛑 Permanent error: ${errorData.message}. Closing connection for ${threadId} permanently.`);
               
               
               eventSource.close(); 
@@ -98,7 +119,6 @@ eventSource.onerror = (error) => {
         }
         
         if (eventSource.readyState === EventSource.CLOSED) {
-          console.log("Connection closed, cleaning up...");
           
           this.eventSources.delete(threadId);
           this.subscribers.delete(threadId);
@@ -113,7 +133,6 @@ eventSource.onerror = (error) => {
 
   private createUnsubscribe(threadId: string, callback: Callback): () => void {
     return () => {
-      console.log("UNSUBSCRIBE called for thread:", threadId);
       
       const threadCallbacks = this.subscribers.get(threadId);
       threadCallbacks?.delete(callback);
@@ -129,7 +148,6 @@ eventSource.onerror = (error) => {
   }
 
   broadcast(threadId: string, msg: Chat) {
-    console.log('Broadcasting to subscribers:', this.subscribers.get(threadId)?.size || 0);
     this.subscribers.get(threadId)?.forEach((cb) => cb(msg));
   }
 

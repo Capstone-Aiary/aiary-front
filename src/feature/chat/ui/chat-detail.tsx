@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChatList from "./chat-list";
 import ChatRoomHeader from "./chat-room-header";
 import ChatInput from "./input";
+import WebChatInput from "./input.web";
 
 function ChatDetail() {
   const insets = useSafeAreaInsets();
@@ -50,7 +51,7 @@ function ChatDetail() {
         ]}
       >
         <ChatList />
-        <ChatInput />
+        {Platform.OS === "web" ? <WebChatInput /> : <ChatInput />}
       </Animated.View>
     </View>
   );

@@ -1,6 +1,6 @@
 import { Chat } from "../types/chat";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "http://localhost:3000/api";
 
 function handleApiError(res: Response) {
   if (!res.ok) {

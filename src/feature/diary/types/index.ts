@@ -28,6 +28,7 @@ export interface Diary {
   id: string; // UUID
   threadId: string;
   title: string;
+  summary: string;
   mood: string;
   content: string; // 일기 내용은 생성 후 상세 조회 시 확인 가능
   createdAt: string; // ISO 8601

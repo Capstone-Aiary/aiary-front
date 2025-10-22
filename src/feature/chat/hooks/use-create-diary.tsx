@@ -1,5 +1,6 @@
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import axios from "axios";
+import { useRouter } from "expo-router";
 
 interface CreateDiaryVariables {
   threadId: string;
@@ -23,7 +24,7 @@ const createDiary = async (
 
   try {
     const { data } = await axios.post<CreateDiaryResponse>(
-      API_ENDPOINT,
+      `http://localhost:3000/api${API_ENDPOINT}`,
       variables
     );
     return data;
@@ -45,8 +46,12 @@ export const useCreateDiary = (
     "mutationFn"
   >
 ) => {
+  const router = useRouter();
   return useMutation<CreateDiaryResponse, Error, CreateDiaryVariables>({
     mutationFn: createDiary,
+    onSuccess: (data) => {
+      router.push(`/diary/${data.diaryId}`);
+    },
     ...options,
   });
 };
