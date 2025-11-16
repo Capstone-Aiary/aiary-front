@@ -1,6 +1,6 @@
 import { Chat } from "../types/chat";
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "https://aiary-cproject-render-backend.onrender.com/";
 
 function handleApiError(res: Response) {
   if (!res.ok) {
@@ -43,6 +43,3 @@ export const chatApi = {
     handleApiError(res);
   },
 };
-
-
-

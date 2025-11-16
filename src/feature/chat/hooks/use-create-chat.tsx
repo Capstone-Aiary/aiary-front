@@ -14,14 +14,12 @@ interface ApiError {
   errorCode: string;
 }
 
-const createThread = async (
-  variables: CreateThreadVariables
-): Promise<CreateThreadResponse> => {
+const createThread = async (variables: CreateThreadVariables): Promise<CreateThreadResponse> => {
   const API_ENDPOINT = "/chat/threads";
 
   try {
     const { data } = await axios.post<CreateThreadResponse>(
-      `http://localhost:3000/api${API_ENDPOINT}`,
+      `https://aiary-cproject-render-backend.onrender.com/${API_ENDPOINT}`,
       variables
     );
     return data;
@@ -35,10 +33,7 @@ const createThread = async (
 };
 
 export const useCreateChat = (
-  options?: Omit<
-    UseMutationOptions<CreateThreadResponse, Error, CreateThreadVariables>,
-    "mutationFn"
-  >
+  options?: Omit<UseMutationOptions<CreateThreadResponse, Error, CreateThreadVariables>, "mutationFn">
 ) => {
   return useMutation<CreateThreadResponse, Error, CreateThreadVariables>({
     mutationFn: createThread,

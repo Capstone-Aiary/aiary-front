@@ -36,7 +36,9 @@ class ChatSSEService {
 
   private async createConnection(threadId: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      const eventSource = new EventSource(`http://localhost:3000/api/chat/stream?threadId=${threadId}`);
+      const eventSource = new EventSource(
+        `https://aiary-cproject-render-backend.onrender.com//chat/stream?threadId=${threadId}`
+      );
 
       this.eventSources.set(threadId, eventSource);
 

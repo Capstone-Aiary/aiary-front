@@ -1,9 +1,9 @@
-import axios from 'axios';
+import axios from "axios";
 
 const apiClient = axios.create({
-  baseURL: 'http://localhost:3000/api',
+  baseURL: "https://aiary-cproject-render-backend.onrender.com/",
   headers: {
-    'Content-Type': 'application/json',
+    "Content-Type": "application/json",
   },
 });
 

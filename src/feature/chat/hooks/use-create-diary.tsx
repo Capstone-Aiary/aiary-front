@@ -23,14 +23,12 @@ interface ApiError {
   status: string;
 }
 
-const createDiary = async (
-  variables: CreateDiaryVariables
-): Promise<CreateDiaryResponse> => {
+const createDiary = async (variables: CreateDiaryVariables): Promise<CreateDiaryResponse> => {
   const API_ENDPOINT = "/diaries";
 
   try {
     const { data } = await axios.post<CreateDiaryResponse>(
-      `http://localhost:3000/api${API_ENDPOINT}`,
+      `https://aiary-cproject-render-backend.onrender.com/${API_ENDPOINT}`,
       variables
     );
     return data;
@@ -47,10 +45,7 @@ const createDiary = async (
 };
 
 export const useCreateDiary = (
-  options?: Omit<
-    UseMutationOptions<CreateDiaryResponse, Error, CreateDiaryVariables>,
-    "mutationFn"
-  >
+  options?: Omit<UseMutationOptions<CreateDiaryResponse, Error, CreateDiaryVariables>, "mutationFn">
 ) => {
   const router = useRouter();
   return useMutation<CreateDiaryResponse, Error, CreateDiaryVariables>({
