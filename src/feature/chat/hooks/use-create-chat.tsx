@@ -19,7 +19,7 @@ const createThread = async (variables: CreateThreadVariables): Promise<CreateThr
 
   try {
     const { data } = await axios.post<CreateThreadResponse>(
-      `https://aiary-cproject-render-backend.onrender.com/${API_ENDPOINT}`,
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}${API_ENDPOINT}`,
       variables
     );
     return data;
