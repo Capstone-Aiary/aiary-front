@@ -1,6 +1,6 @@
 import { Chat } from "../types/chat";
 
-const BASE_URL = "https://aiary-cproject-render-backend.onrender.com/";
+const BASE_URL = process.env.EXPO_PUBLIC_BACKEND_URL ?? "https://aiary-cproject-render-backend.onrender.com";
 
 function handleApiError(res: Response) {
   if (!res.ok) {

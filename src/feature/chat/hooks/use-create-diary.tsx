@@ -28,7 +28,7 @@ const createDiary = async (variables: CreateDiaryVariables): Promise<CreateDiary
 
   try {
     const { data } = await axios.post<CreateDiaryResponse>(
-      `https://aiary-cproject-render-backend.onrender.com/${API_ENDPOINT}`,
+      `${process.env.EXPO_PUBLIC_BACKEND_URL}${API_ENDPOINT}`,
       variables
     );
     return data;
