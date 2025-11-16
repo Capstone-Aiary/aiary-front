@@ -1,18 +1,16 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import { chatSSEService } from "../services/chatSSEService";
 import { Chat } from "../types/chat";
 
 export function useChatEvents(threadId: string) {
   const queryClient = useQueryClient();
-  const isSubscribedRef = useRef(false);
 
   useEffect(() => {
-    if (isSubscribedRef.current) {
+    if (!threadId) {
       return;
     }
 
-    isSubscribedRef.current = true;
     const unsubscribe = chatSSEService.subscribe(threadId, (msg: Chat) => {
       queryClient.setQueryData(["chatList", threadId], (oldData: any) => {
         if (!oldData) {
@@ -52,7 +50,6 @@ export function useChatEvents(threadId: string) {
     });
 
     return () => {
-      isSubscribedRef.current = false;
       unsubscribe();
     };
   }, [threadId]);
