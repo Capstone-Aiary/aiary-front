@@ -2,6 +2,7 @@ import { useLocalSearchParams } from "expo-router";
 import { useMemo, useRef } from "react";
 import { FlatList, Keyboard, View } from "react-native";
 import { useChatList } from "../hooks/use-chat";
+import { useChatEvents } from "../hooks/use-chat-event";
 import type { Chat } from "../types/chat";
 import DateDivider from "./date-divider";
 import ChatMessage from "./message/chat-message";
@@ -11,6 +12,7 @@ type ChatListItem = { type: "message"; data: Chat } | { type: "date"; data: { da
 const ChatList = () => {
   const { id: threadId } = useLocalSearchParams<{ id: string }>();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatList(threadId);
+  useChatEvents(threadId);
 
   const chatList: Chat[] = data?.pages?.flatMap((page) => page.items) ?? [];
   const sortedChatList = useMemo(

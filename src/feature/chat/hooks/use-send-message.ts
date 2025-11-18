@@ -1,14 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { chatApi } from "../services/chat-api";
+import { chatSSEService } from "../services/chatSSEService";
 import { Chat } from "../types/chat";
-import { useChatEvents } from "./use-chat-event";
 
 export function useSendMessage(threadId: string) {
   const queryClient = useQueryClient();
-  const { startStreaming } = useChatEvents(threadId);
 
   return useMutation({
-    mutationFn: (content: string) => chatApi.sendMessage(threadId, content),
+    mutationFn: async (content: string) => {
+      chatSSEService.startStream(threadId);
+
+      return chatApi.sendMessage(threadId, content);
+    },
 
     onMutate: async (content: string) => {
       await queryClient.cancelQueries({ queryKey: ["chatList", threadId] });
@@ -20,9 +23,9 @@ export function useSendMessage(threadId: string) {
         role: "user",
         content: content,
         createdAt: new Date().toISOString(),
-        threadId: threadId,
-        senderId: "me",
-        senderName: "Me",
+        threadId: "",
+        senderId: "",
+        senderName: "",
       };
 
       queryClient.setQueryData(["chatList", threadId], (oldData: any) => {
@@ -45,11 +48,9 @@ export function useSendMessage(threadId: string) {
       return { previousChatList };
     },
 
-    onSuccess: () => {
-      startStreaming();
-    },
-
     onError: (err, newTodo, context) => {
+      chatSSEService.closeStream(threadId);
+
       if (context?.previousChatList) {
         queryClient.setQueryData(["chatList", threadId], context.previousChatList);
       }
