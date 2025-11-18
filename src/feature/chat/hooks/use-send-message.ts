@@ -1,13 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { chatApi } from "../services/chat-api"; // 메시지 전송 API
+import { chatApi } from "../services/chat-api";
 import { Chat } from "../types/chat";
 import { useChatEvents } from "./use-chat-event";
 
 export function useSendMessage(threadId: string) {
   const queryClient = useQueryClient();
   const { startStreaming } = useChatEvents(threadId);
+
   return useMutation({
-    mutationFn: (content: string) => chatApi.sendMessage(threadId, content), // 1. 실제 API 호출
+    mutationFn: (content: string) => chatApi.sendMessage(threadId, content),
 
     onMutate: async (content: string) => {
       await queryClient.cancelQueries({ queryKey: ["chatList", threadId] });
@@ -19,9 +20,9 @@ export function useSendMessage(threadId: string) {
         role: "user",
         content: content,
         createdAt: new Date().toISOString(),
-        threadId: "",
-        senderId: "",
-        senderName: "",
+        threadId: threadId,
+        senderId: "me",
+        senderName: "Me",
       };
 
       queryClient.setQueryData(["chatList", threadId], (oldData: any) => {
@@ -43,7 +44,8 @@ export function useSendMessage(threadId: string) {
 
       return { previousChatList };
     },
-    onSuccess: (data: Chat) => {
+
+    onSuccess: () => {
       startStreaming();
     },
 

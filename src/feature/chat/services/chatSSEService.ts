@@ -8,20 +8,13 @@ class ChatSSEService {
   private activeSources = new Map<string, EventSource>();
   private messageBuffer = new Map<string, Chat>();
 
-  startStream(
-    threadId: string,
-    onUpdate: OnUpdate,
-    onComplete?: OnComplete,
-    onError?: OnError
-  ): () => void {
+  startStream(threadId: string, onUpdate: OnUpdate, onComplete?: OnComplete, onError?: OnError): () => void {
     this.stopStream(threadId);
 
     const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/chat/stream?threadId=${threadId}`;
     const eventSource = new EventSource(url);
 
     this.activeSources.set(threadId, eventSource);
-
-    eventSource.onopen = () => {};
 
     eventSource.onmessage = (event) => {
       if (event.data === "[DONE]") {
@@ -66,7 +59,7 @@ class ChatSSEService {
 
     if (!currentMessage) {
       currentMessage = {
-        id: `temp-${Date.now()}`,
+        id: `ai-${Date.now()}`,
         threadId: threadId,
         senderId: "ai",
         senderName: "Assistant",

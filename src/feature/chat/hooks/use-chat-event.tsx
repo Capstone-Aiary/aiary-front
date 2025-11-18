@@ -23,25 +23,20 @@ export function useChatEvents(threadId: string) {
             };
           }
 
-          let messageExists = false;
+          const newPages = [...oldData.pages];
+          const firstPage = { ...newPages[0] };
+          const newItems = [...firstPage.items];
 
-          const newPages = oldData.pages.map((page: any) => {
-            const newItems = page.items.map((item: Chat) => {
-              if (item.id === msg.id) {
-                messageExists = true;
-                return msg;
-              }
-              return item;
-            });
-            return { ...page, items: newItems };
-          });
+          const msgIndex = newItems.findIndex((item: Chat) => item.id === msg.id);
 
-          if (!messageExists) {
-            newPages[0] = {
-              ...newPages[0],
-              items: [msg, ...newPages[0].items],
-            };
+          if (msgIndex !== -1) {
+            newItems[msgIndex] = msg;
+          } else {
+            newItems.unshift(msg);
           }
+
+          firstPage.items = newItems;
+          newPages[0] = firstPage;
 
           return {
             ...oldData,
