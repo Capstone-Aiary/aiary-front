@@ -1,3 +1,4 @@
+// services/chatSSEService.ts
 import { Chat } from "../types/chat";
 
 type Callback = (msg: Chat) => void;
@@ -9,6 +10,7 @@ class ChatSSEService {
 
   startStream(threadId: string): void {
     if (this.eventSources.has(threadId)) {
+      console.log("SSE already connected for:", threadId);
       return;
     }
 
@@ -17,22 +19,15 @@ class ChatSSEService {
     this.eventSources.set(threadId, eventSource);
 
     eventSource.onopen = () => {
-      console.log("SSE connected for:", threadId);
+      console.log(`SSE Connection OPENED for thread: ${threadId}`);
     };
 
-    eventSource.onmessage = (event) => {
-      if (event.data === "[DONE]") {
-        console.log("Stream completed for:", threadId);
-        this.pendingMessages.delete(threadId);
-
-        this.closeStream(threadId);
-        return;
-      }
-
+    eventSource.addEventListener("delta", (event) => {
+      console.log("data (delta):", event.data);
       try {
         const chunk = JSON.parse(event.data);
 
-        if (chunk.content) {
+        if (chunk.type === "delta" && chunk.text) {
           let currentMessage = this.pendingMessages.get(threadId);
 
           if (!currentMessage) {
@@ -42,28 +37,59 @@ class ChatSSEService {
               senderId: "",
               senderName: "",
               role: "assistant",
-              content: chunk.content,
+              content: chunk.text,
               createdAt: new Date().toISOString(),
             };
           } else {
             currentMessage = {
               ...currentMessage,
-              content: (currentMessage.content || "") + chunk.content,
+              content: (currentMessage.content || "") + chunk.text,
             };
           }
 
           this.pendingMessages.set(threadId, currentMessage);
-
           this.subscribers.get(threadId)?.forEach((cb) => cb(currentMessage!));
         }
       } catch (error) {
-        console.error("Error parsing message:", error);
+        console.error("Error parsing delta message:", error);
       }
+    });
+
+    eventSource.addEventListener("done", (event) => {
+      console.log("data (done):", event.data);
+      try {
+        const chunk = JSON.parse(event.data);
+        if (chunk.type === "done") {
+          console.log("Stream completed for:", threadId);
+          this.pendingMessages.delete(threadId);
+
+          this.closeStream(threadId);
+        }
+      } catch (error) {
+        console.error("Error parsing done message:", error);
+      }
+    });
+
+    eventSource.onmessage = (event) => {
+      console.log("data (default message):", event.data);
     };
 
     eventSource.onerror = (error) => {
-      console.error("SSE error for:", threadId, error);
-      this.closeStream(threadId);
+      console.error("SSE CONNECTION DROPPED (onerror executed):", error);
+
+      if (error instanceof MessageEvent && error.data) {
+        try {
+          const errorData = JSON.parse(error.data);
+          if (errorData.type === "IllegalStateException" && errorData.message === "thread finalized") {
+            this.closeStream(threadId);
+            return;
+          }
+        } catch (e) {}
+      }
+
+      if (eventSource.readyState === EventSource.CLOSED) {
+        this.closeStream(threadId);
+      }
     };
   }
 
@@ -72,7 +98,7 @@ class ChatSSEService {
     if (eventSource) {
       eventSource.close();
       this.eventSources.delete(threadId);
-      console.log("SSE closed for:", threadId);
+      console.log("CLOSING EventSource for:", threadId);
     }
   }
 
