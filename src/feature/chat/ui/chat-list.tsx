@@ -2,30 +2,19 @@ import { useLocalSearchParams } from "expo-router";
 import { useMemo, useRef } from "react";
 import { FlatList, Keyboard, View } from "react-native";
 import { useChatList } from "../hooks/use-chat";
-import { useChatEvents } from "../hooks/use-chat-event";
 import type { Chat } from "../types/chat";
 import DateDivider from "./date-divider";
 import ChatMessage from "./message/chat-message";
 
-type ChatListItem =
-  | { type: "message"; data: Chat }
-  | { type: "date"; data: { date: string; id: string } };
+type ChatListItem = { type: "message"; data: Chat } | { type: "date"; data: { date: string; id: string } };
 
 const ChatList = () => {
   const { id: threadId } = useLocalSearchParams<{ id: string }>();
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } =
-    useChatList(threadId);
-  useChatEvents(threadId);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useChatList(threadId);
 
   const chatList: Chat[] = data?.pages?.flatMap((page) => page.items) ?? [];
   const sortedChatList = useMemo(
-    () =>
-      [...chatList]
-        .sort(
-          (a, b) =>
-            new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
-        )
-        .reverse(),
+    () => [...chatList].sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()).reverse(),
     [chatList]
   );
 
@@ -53,11 +42,7 @@ const ChatList = () => {
   }, [sortedChatList]);
 
   const renderItem = ({ item }: { item: ChatListItem }) =>
-    item.type === "date" ? (
-      <DateDivider date={item.data.date} />
-    ) : (
-      <ChatMessage item={item.data} />
-    );
+    item.type === "date" ? <DateDivider date={item.data.date} /> : <ChatMessage item={item.data} />;
 
   const scrollViewRef = useRef<FlatList<ChatListItem>>(null);
 
@@ -89,11 +74,7 @@ const ChatList = () => {
 
 const isSameDay = (date1: Date, date2: Date): boolean => {
   return (
-    new Date(
-      date1.getFullYear(),
-      date1.getMonth(),
-      date1.getDate()
-    ).getTime() ===
+    new Date(date1.getFullYear(), date1.getMonth(), date1.getDate()).getTime() ===
     new Date(date2.getFullYear(), date2.getMonth(), date2.getDate()).getTime()
   );
 };

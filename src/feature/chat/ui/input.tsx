@@ -1,18 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import {
-  Platform,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  useWindowDimensions,
-} from "react-native";
-import Animated, {
-  useAnimatedKeyboard,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import { Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
+import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 import { useSendMessage } from "../hooks/use-send-message";
 
 function ChatInput() {
@@ -22,10 +11,8 @@ function ChatInput() {
   const keyboard = useAnimatedKeyboard();
   const { mutate: sendMessage } = useSendMessage(threadId);
   const animatedKeyboardStyles = useAnimatedStyle(() => ({
-    paddingBottom:
-      Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
+    paddingBottom: Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
   }));
-
   const handleSend = useCallback(async () => {
     const messageContent = chat.trim();
     if (!messageContent) return;
@@ -39,9 +26,7 @@ function ChatInput() {
   }, [chat, threadId]);
 
   return (
-    <Animated.View
-      style={[styles.container, { width }, animatedKeyboardStyles]}
-    >
+    <Animated.View style={[styles.container, { width }, animatedKeyboardStyles]}>
       <View style={styles.inputContainer}>
         <TextInput
           multiline
@@ -86,9 +71,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
     lineHeight: 20,
     paddingHorizontal: 4,
-    ...(Platform.OS === "android"
-      ? { textAlignVertical: "center" }
-      : { paddingVertical: 8 }),
+    ...(Platform.OS === "android" ? { textAlignVertical: "center" } : { paddingVertical: 8 }),
     color: "#000",
   },
   send: {
