@@ -16,6 +16,7 @@ export function useChatEvents(threadId: string) {
       threadId,
       (msg: Chat) => {
         queryClient.setQueryData(["chatList", threadId], (oldData: any) => {
+          console.log("Stream Update Triggered!", msg.content, oldData);
           if (!oldData) {
             return {
               pages: [{ items: [msg], nextCursor: null }],

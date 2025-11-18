@@ -56,7 +56,7 @@ class ChatSSEService {
 
   private handleChunk(threadId: string, newContent: string, onUpdate: OnUpdate) {
     let currentMessage = this.messageBuffer.get(threadId);
-
+    console.log("Received chunk:", newContent);
     if (!currentMessage) {
       currentMessage = {
         id: `ai-${Date.now()}`,
