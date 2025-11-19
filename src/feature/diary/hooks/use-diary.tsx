@@ -1,16 +1,6 @@
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQuery,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import * as api from "../api";
-import type {
-  ApiError,
-  CreateDiaryRequest,
-  Diary,
-  PaginatedResponse,
-} from "../types";
+import type { ApiError, CreateDiaryRequest, Diary, DiarySummary } from "../types";
 
 const diaryKeys = {
   all: ["diaries"] as const,
@@ -20,21 +10,10 @@ const diaryKeys = {
   detail: (id: string) => [...diaryKeys.details(), id] as const,
 };
 
-// 특정 스레드의 일기 목록 조회 (무한 스크롤)
-export const useGetDiaries = (threadId: string) => {
-  return useInfiniteQuery<
-    PaginatedResponse<Diary>,
-    Error,
-    PaginatedResponse<Diary>,
-    ReturnType<typeof diaryKeys.list>,
-    string | null
-  >({
-    queryKey: diaryKeys.list(threadId),
-    queryFn: ({ pageParam = null }) =>
-      api.getDiaries({ threadId, cursor: pageParam ?? null }),
-    initialPageParam: null,
-    getNextPageParam: (lastPage) => lastPage?.cursor,
-    enabled: !!threadId,
+export const useGetDiaries = () => {
+  return useQuery<DiarySummary[], Error>({
+    queryKey: ["diary", "list"],
+    queryFn: api.getDiaryList,
   });
 };
 

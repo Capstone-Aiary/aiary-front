@@ -14,7 +14,9 @@ export default function RootLayout() {
         <Stack.Screen name="home" options={{ headerShown: false }} />
         <Stack.Screen name="chat" options={{ headerShown: false }} />
         <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
+        <Stack.Screen name="diary/index" options={{ headerShown: false }} />
         <Stack.Screen name="diary/[id]" options={{ headerShown: false }} />
+
         <Stack.Screen name="setting" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />

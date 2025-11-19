@@ -18,20 +18,34 @@ export interface PaginatedResponse<T> {
 export interface ChatThread {
   id: string; // UUID
   title: string;
-  status: 'active' | 'archived';
+  status: "active" | "archived";
   createdAt: string; // ISO 8601
 }
 
-
 // 엔티티: Diary
+export interface DiaryEmotions {
+  joy: number;
+  sadness: number;
+  anger: number;
+  anxiety: number;
+  tiredness: number;
+  calm: number;
+}
+
 export interface Diary {
-  id: string; // UUID
+  id: string;
   threadId: string;
-  title: string;
+
+  content: string;
   summary: string;
-  mood: string;
-  content: string; // 일기 내용은 생성 후 상세 조회 시 확인 가능
-  createdAt: string; // ISO 8601
+
+  emotions: DiaryEmotions;
+  dominantEmotion: string;
+  overallMoodScore: number;
+  recommendation: string;
+
+  createdAt: string;
+  analyzedAt: string;
 }
 
 // 요청(Request) 타입들
@@ -40,7 +54,7 @@ export interface CreateThreadRequest {
 }
 
 export interface UpdateThreadStatusRequest {
-  status: 'active' | 'archived';
+  status: "active" | "archived";
 }
 
 export interface SendMessageRequest {
@@ -57,3 +71,27 @@ export interface CreateDiaryRequest {
   title: string;
   mood: string;
 }
+
+export interface DiaryEmotions {
+  joy: number;
+  sadness: number;
+  anger: number;
+  anxiety: number;
+  tiredness: number;
+  calm: number;
+}
+
+export interface Diary {
+  id: string;
+  threadId: string;
+  content: string;
+  summary: string;
+  emotions: DiaryEmotions;
+  dominantEmotion: string;
+  overallMoodScore: number;
+  recommendation: string;
+  createdAt: string;
+  analyzedAt: string;
+}
+
+export type DiarySummary = Pick<Diary, "id" | "summary" | "dominantEmotion" | "createdAt">;
