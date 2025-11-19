@@ -12,34 +12,30 @@ function ChatBalloon({ message, isMe }: ChatBalloonProps) {
       style={[
         styles.container,
         {
-          backgroundColor: isMe ? "#5B5FED" : "#fff",
-          borderTopRightRadius: isMe ? 4 : 18,
-          borderTopLeftRadius: !isMe ? 4 : 18,
+          backgroundColor: isMe ? "#F88010" : "#fff",
+          borderTopRightRadius: 18,
+          borderTopLeftRadius: 18,
+          borderBottomLeftRadius: isMe ? 18 : 4,
+          borderBottomRightRadius: isMe ? 4 : 18,
         },
       ]}
     >
-      <Text style={[styles.messageText, { color: isMe ? "#fff" : "#000" }]}>
-        {message}
-      </Text>
+      <Text style={[styles.messageText, { color: isMe ? "#fff" : "#333" }]}>{message}</Text>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: "70%",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 18,
+    maxWidth: "80%",
+    paddingHorizontal: 18,
+    paddingVertical: 14,
     ...Platform.select({
       ios: {
         shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 1,
-        },
-        shadowOpacity: 0.08,
-        shadowRadius: 3,
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
       },
       android: {
         elevation: 2,

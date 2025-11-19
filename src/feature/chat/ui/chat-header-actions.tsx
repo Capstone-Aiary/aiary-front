@@ -1,3 +1,5 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
@@ -7,91 +9,60 @@ interface ChatHeaderActionsProps {
   onCreateDiary?: () => void;
 }
 
-const ChatHeaderActions = ({
-  date = "오늘은 10월 11일입니다 ✨",
-  onNewChat,
-  onCreateDiary,
-}: ChatHeaderActionsProps) => {
+const ChatHeaderActions = ({ onCreateDiary }: ChatHeaderActionsProps) => {
   return (
     <View style={styles.container}>
-      <Text style={styles.dateText}>{date}</Text>
-      <View style={styles.buttonContainer}>
-        <TouchableOpacity
-          style={styles.createDiaryButton}
-          onPress={onCreateDiary}
+      <TouchableOpacity onPress={onCreateDiary} style={styles.touchable}>
+        <LinearGradient
+          colors={["#F88010", "#FF5E3A"]}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 0 }}
+          style={styles.banner}
         >
-          <Text style={styles.createDiaryIcon}>📄</Text>
-          <Text style={styles.createDiaryText}>종료 후 일기 생성</Text>
-        </TouchableOpacity>
-      </View>
+          <View style={styles.row}>
+            <MaterialCommunityIcons name="book-open-page-variant" size={20} color="#fff" style={{ marginRight: 8 }} />
+            <Text style={styles.bannerTitle}>대화를 일기로 생성하기</Text>
+          </View>
+          <Text style={styles.bannerSubtitle}>AI가 우리의 대화를 바탕으로 감성적인 일기를 작성해드려요</Text>
+        </LinearGradient>
+      </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#FFFFFF",
     paddingHorizontal: 16,
+    marginBottom: 10,
+  },
+  touchable: {
+    width: "100%",
+  },
+  banner: {
+    borderRadius: 16,
     paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5E5",
+    paddingHorizontal: 20,
+    alignItems: "center",
+    shadowColor: "#F88010",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  dateText: {
-    fontSize: 13,
-    color: "#999",
-    textAlign: "center",
-    marginBottom: 12,
-  },
-  buttonContainer: {
-    flexDirection: "row",
-    gap: 12,
-  },
-  newChatButton: {
-    flex: 1,
+  row: {
     flexDirection: "row",
     alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    borderWidth: 1.5,
-    borderColor: "#00CEC8",
-    backgroundColor: "#FFFFFF",
+    marginBottom: 6,
   },
-  newChatIcon: {
-    fontSize: 18,
-    color: "#00CEC8",
-    fontWeight: "600",
-    marginRight: 6,
-  },
-  newChatText: {
-    fontSize: 14,
-    color: "#00CEC8",
-    fontWeight: "600",
-  },
-  createDiaryButton: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: "#5B5FED",
-    shadowColor: "#5B5FED",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  createDiaryIcon: {
+  bannerTitle: {
     fontSize: 16,
-    marginRight: 6,
+    fontWeight: "bold",
+    color: "#fff",
   },
-  createDiaryText: {
-    fontSize: 14,
-    color: "#FFFFFF",
-    fontWeight: "600",
+  bannerSubtitle: {
+    fontSize: 11,
+    color: "rgba(255,255,255,0.8)",
+    textAlign: "center",
   },
 });
 

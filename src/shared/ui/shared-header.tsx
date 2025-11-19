@@ -1,3 +1,4 @@
+import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import React from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
@@ -11,7 +12,7 @@ function SharedHeader({ children }: SharedHeaderProps) {
 }
 
 function HeaderSide({ children }: { children: React.ReactNode }) {
-  return <View>{children}</View>;
+  return <View style={styles.sideContainer}>{children}</View>;
 }
 
 function PlaceHoder() {
@@ -21,44 +22,31 @@ function PlaceHoder() {
 function BackButton() {
   const router = useRouter();
   return (
-    <Pressable onPress={() => router.navigate("/")} style={styles.backButton}>
-      <Text style={styles.backIcon}>←</Text>
+    <Pressable onPress={() => router.back()} style={styles.iconButton}>
+      <Image source={require("@/assets/images/back-icon.png")} style={styles.backIcon} />
     </Pressable>
   );
 }
 
-function SettingButton() {
-  const router = useRouter();
-
+function EditButton({ onPress }: { onPress?: () => void }) {
   return (
-    <Pressable
-      onPress={() => router.push("/setting")}
-      style={styles.settingsButton}
-    >
-      <Text style={styles.settingsIcon}>⚙️</Text>
+    <Pressable onPress={onPress} style={[styles.iconButton, styles.editButton]}>
+      <Text style={styles.editIcon}>✎</Text>
     </Pressable>
   );
 }
 
-function HeaderTitle({ title }: { title: string }) {
+function HeaderTitle({ title, subtitle }: { title: string; subtitle?: string }) {
   return (
-    <View style={styles.headerTitle}>
+    <View style={styles.headerTitleContainer}>
       <Text style={styles.title}>{title}</Text>
+      {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
     </View>
   );
 }
 
-function MenuButton() {
-  return (
-    <Pressable style={styles.menuButton}>
-      <Text style={styles.menuIcon}>☰</Text>
-    </Pressable>
-  );
-}
-
 SharedHeader.Side = HeaderSide;
-SharedHeader.Menu = MenuButton;
-SharedHeader.Setting = SettingButton;
+SharedHeader.Edit = EditButton;
 SharedHeader.PlaceHoder = PlaceHoder;
 SharedHeader.Back = BackButton;
 SharedHeader.Title = HeaderTitle;
@@ -68,46 +56,50 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: 20,
     paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5E5",
+    backgroundColor: "#FFFBF2",
   },
-  menuButton: {
-    padding: 8,
-  },
-  backButton: {
-    padding: 8,
-  },
-  backIcon: {
-    fontSize: 24,
-    color: "#333",
-  },
-  menuIcon: {
-    fontSize: 24,
-    color: "#333",
-  },
-  headerTitle: {
-    flexDirection: "row",
+  sideContainer: {
+    width: 40,
     alignItems: "center",
   },
-  homeIcon: {
-    fontSize: 24,
-  },
-  placeholder: {
+  iconButton: {
     width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: "#F2F4F6",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  editButton: {
+    backgroundColor: "#FFF5E0",
+  },
+  backIcon: {
+    width: 20,
+    height: 20,
+  },
+  editIcon: {
+    fontSize: 18,
+    color: "#F88010",
+    fontWeight: "bold",
+  },
+  headerTitleContainer: {
+    alignItems: "center",
   },
   title: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: "600",
     color: "#333",
   },
-  settingsButton: {
-    padding: 8,
+  subtitle: {
+    fontSize: 12,
+    color: "#F88010",
+    marginTop: 2,
+    fontWeight: "500",
   },
-  settingsIcon: {
-    fontSize: 24,
+  placeholder: {
+    width: 40,
   },
 });
 

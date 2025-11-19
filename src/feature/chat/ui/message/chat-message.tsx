@@ -1,3 +1,4 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { StyleSheet, Text, View } from "react-native";
 import type { Chat } from "../../types/chat";
@@ -11,36 +12,33 @@ interface ChatMessageProps {
 function ChatMessage({ item }: ChatMessageProps) {
   const isAI = item.role !== "user";
   const isMe = item.role === "user";
+
   return (
     <View
       style={[
         styles.container,
         {
-          flexDirection: isMe ? "row-reverse" : "row",
+          flexDirection: isMe ? "row" : "row",
+          justifyContent: isMe ? "flex-end" : "flex-start",
         },
       ]}
     >
       {isAI && (
-        <View style={styles.aiAvatar}>
-          <Text style={styles.aiAvatarText}>🤖</Text>
+        <View style={[styles.avatar, { backgroundColor: "#F88010", marginRight: 8 }]}>
+          <MaterialCommunityIcons name="heart" size={16} color="#fff" />
         </View>
       )}
-      <View
-        style={[
-          styles.balloonContainer,
-          { alignItems: isMe ? "flex-end" : "flex-start" },
-        ]}
-      >
+
+      <View style={[styles.contentContainer, { alignItems: isMe ? "flex-end" : "flex-start" }]}>
         <ChatBalloon isMe={isMe ?? false} message={item.content} />
-        <View
-          style={[
-            styles.infoContainer,
-            { flexDirection: isMe ? "row-reverse" : "row" },
-          ]}
-        >
-          <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>
-        </View>
+        <Text style={styles.time}>{formatToAmPm(item.createdAt)}</Text>
       </View>
+
+      {isMe && (
+        <View style={[styles.avatar, { backgroundColor: "#E0E0E0", marginLeft: 8 }]}>
+          <MaterialCommunityIcons name="account" size={20} color="#fff" />
+        </View>
+      )}
     </View>
   );
 }
@@ -48,34 +46,25 @@ function ChatMessage({ item }: ChatMessageProps) {
 const styles = StyleSheet.create({
   container: {
     width: "100%",
-    gap: 8,
+    marginVertical: 6,
     alignItems: "flex-start",
   },
-  aiAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 16,
-    backgroundColor: "#00D9D4",
+  avatar: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 4,
+    marginTop: 0,
   },
-  aiAvatarText: {
-    fontSize: 18,
-  },
-  balloonContainer: {
-    gap: 4,
-    flex: 1,
+  contentContainer: {
+    maxWidth: "75%",
   },
   time: {
-    color: "#B5B5B5",
+    color: "#999",
     fontSize: 11,
-    lineHeight: 16,
-  },
-  infoContainer: {
-    gap: 4,
-    alignItems: "center",
-    flexDirection: "row",
+    marginTop: 4,
+    marginHorizontal: 4,
   },
 });
 

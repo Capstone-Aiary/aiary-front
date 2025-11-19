@@ -1,6 +1,4 @@
-// app/login.tsx
 import { useLogin } from "@/src/feature/auth/hooks/auth";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
@@ -47,157 +45,189 @@ export default function LoginScreen() {
   };
 
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-        <Stack.Screen options={{ headerShown: false }} />
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerShown: false }} />
 
-        <View style={styles.iconContainer}>
-          <MaterialCommunityIcons name="feather" size={50} color="#6A5ACD" />
-        </View>
+      <View style={styles.topCircle} />
+      <View style={styles.bottomCircle} />
 
-        <Text style={styles.title}>Aiary에 다시 오신 것을 환영합니다</Text>
-        <Text style={styles.subtitle}>당신의 하루를 기록하고 감정을 분석해보세요.</Text>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.appName}>Aiary</Text>
+            <View style={styles.underline} />
 
-        <View style={styles.card}>
-          <Text style={styles.label}>사용자 이름</Text>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="account-outline" size={20} color="#888" style={styles.inputIcon} />
+            <Text style={styles.pageTitle}>로그인</Text>
+            <Text style={styles.subtitle}>다시 만나서 반가워요</Text>
+          </View>
+
+          <View style={styles.formContainer}>
+            <Text style={styles.label}>유저이름</Text>
             <TextInput
               style={styles.input}
-              placeholder="사용자 이름을 입력하세요"
+              placeholder="유저이름을 입력해주세요"
+              placeholderTextColor="#aaa"
               value={email}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
             />
-          </View>
 
-          <Text style={styles.label}>비밀번호</Text>
-          <View style={styles.inputContainer}>
-            <MaterialCommunityIcons name="lock-outline" size={20} color="#888" style={styles.inputIcon} />
+            <Text style={styles.label}>비밀번호</Text>
             <TextInput
               style={styles.input}
-              placeholder="********"
+              placeholder="비밀번호를 입력해주세요"
+              placeholderTextColor="#aaa"
               value={password}
               onChangeText={setPassword}
               secureTextEntry
             />
+
+            <TouchableOpacity style={styles.forgotPasswordContainer}>
+              <Text style={styles.forgotPasswordText}>비밀번호를 잊으셨나요?</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.loginButton} onPress={handleLogin} disabled={isPending}>
+              <Text style={styles.loginButtonText}>로그인</Text>
+            </TouchableOpacity>
+
+            <View style={styles.signupPrompt}>
+              <Text style={styles.signupText}>아직 계정이 없으신가요?</Text>
+              <TouchableOpacity onPress={handleGoToSignUp}>
+                <Text style={styles.signupLink}>회원가입</Text>
+              </TouchableOpacity>
+            </View>
           </View>
-
-          <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={handleLogin} disabled={isPending}>
-            <Text style={styles.primaryButtonText}>로그인</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.signupPrompt}>
-          <Text style={styles.signupText}>계정이 없으신가요?</Text>
-          <TouchableOpacity onPress={handleGoToSignUp}>
-            <Text style={styles.signupLink}>회원가입</Text>
-          </TouchableOpacity>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#FFFBF2",
+    overflow: "hidden",
+  },
+  topCircle: {
+    position: "absolute",
+    top: -40,
+    right: -40,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
+    backgroundColor: "#FFF5E0",
+  },
+  bottomCircle: {
+    position: "absolute",
+    bottom: 100,
+    left: -60,
+    width: 180,
+    height: 180,
+    borderRadius: 90,
+    backgroundColor: "#FFF5E0",
+  },
   scrollContainer: {
     flexGrow: 1,
+    paddingHorizontal: 24,
     justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    padding: 20,
   },
-  iconContainer: {
-    width: 80,
-    height: 80,
-    borderRadius: 20,
-    backgroundColor: "#F3E5F5",
-    justifyContent: "center",
+  headerContainer: {
     alignItems: "center",
+    marginBottom: 50,
+    marginTop: 60,
+  },
+  appName: {
+    fontSize: 36,
+    color: "#1F2937",
+    fontFamily: Platform.select({ ios: "System", android: "sans-serif-medium" }),
+  },
+  underline: {
+    width: 40,
+    height: 3,
+    backgroundColor: "#F97316",
+    marginTop: 5,
     marginBottom: 20,
   },
-  title: {
-    fontSize: 22,
+  pageTitle: {
+    fontSize: 28,
     fontWeight: "bold",
-    color: "#333",
-    marginBottom: 10,
-    textAlign: "center",
+    color: "#1F2937",
+    marginBottom: 8,
   },
   subtitle: {
     fontSize: 16,
-    color: "#666",
-    textAlign: "center",
-    marginBottom: 30,
+    color: "#6B7280",
   },
-  card: {
+  formContainer: {
     width: "100%",
-    backgroundColor: "#fff",
-    borderRadius: 15,
-    padding: 25,
-    elevation: 3,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 5,
   },
   label: {
-    width: "100%",
-    textAlign: "left",
-    fontSize: 15,
-    color: "#333",
+    fontSize: 14,
     fontWeight: "bold",
+    color: "#555",
     marginBottom: 8,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    width: "100%",
-    height: 50,
-    borderColor: "#E0E0E0",
-    borderWidth: 1,
-    borderRadius: 10,
-    backgroundColor: "#F8F8F8",
-    paddingHorizontal: 10,
-    marginBottom: 20,
-  },
-  inputIcon: {
-    marginRight: 10,
+    marginTop: 16,
+    marginLeft: 4,
   },
   input: {
-    flex: 1,
-    fontSize: 16,
-  },
-  button: {
     width: "100%",
-    paddingVertical: 15,
-    borderRadius: 10,
+    height: 52,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    paddingHorizontal: 16,
+    fontSize: 16,
+    borderWidth: 1,
+    borderColor: "#eee",
+    color: "#333",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 3,
+    elevation: 2,
+  },
+  forgotPasswordContainer: {
+    alignSelf: "flex-end",
+    marginTop: 12,
+    marginBottom: 30,
+  },
+  forgotPasswordText: {
+    color: "#6B7280",
+    fontSize: 13,
+  },
+  loginButton: {
+    width: "100%",
+    height: 56,
+    backgroundColor: "#F88010",
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
+    shadowColor: "#F88010",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
   },
-  primaryButton: {
-    backgroundColor: "#6A5ACD",
-    marginTop: 10,
-  },
-  primaryButtonText: {
+  loginButtonText: {
     color: "#fff",
     fontSize: 18,
     fontWeight: "bold",
   },
   signupPrompt: {
-    flexDirection: "row",
-    marginTop: 30,
-    justifyContent: "center",
+    flexDirection: "column",
     alignItems: "center",
+    marginTop: 40,
+    marginBottom: 20,
+    gap: 5,
   },
   signupText: {
-    fontSize: 15,
+    fontSize: 14,
     color: "#666",
-    marginRight: 5,
   },
   signupLink: {
     fontSize: 15,
-    color: "#6A5ACD",
+    color: "#F88010",
     fontWeight: "bold",
   },
 });

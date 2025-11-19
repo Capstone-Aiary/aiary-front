@@ -1,10 +1,7 @@
 import { useLocalSearchParams } from "expo-router";
 import type React from "react";
 import { Platform, View } from "react-native";
-import Animated, {
-  useAnimatedKeyboard,
-  useAnimatedStyle,
-} from "react-native-reanimated";
+import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import ChatList from "./chat-list";
 import ChatRoomHeader from "./chat-room-header";
@@ -19,10 +16,7 @@ function ChatDetail() {
   const animatedStyles = useAnimatedStyle(() => ({
     transform: [
       {
-        translateY:
-          Platform.OS === "android"
-            ? 0
-            : -keyboard.height.value + insets.bottom - 10,
+        translateY: Platform.OS === "android" ? 0 : -keyboard.height.value + insets.bottom - 10,
       },
     ],
   }));
@@ -31,7 +25,7 @@ function ChatDetail() {
     <View
       style={{
         flex: 1,
-        backgroundColor: "#fff",
+        backgroundColor: "#FFFBF2",
         paddingTop: insets.top,
         width: "100%",
         paddingBottom: insets.bottom + 14,
@@ -43,7 +37,7 @@ function ChatDetail() {
           {
             flex: 1,
             width: "100%",
-            backgroundColor: "#F5F5F7",
+            backgroundColor: "#FFFBF2",
             alignContent: "center",
             justifyContent: "center",
           },

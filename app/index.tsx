@@ -1,76 +1,124 @@
-import Navigation from "@/src/feature/home/ui/navigation";
 import { useCurrentWeather } from "@/src/shared/hooks/use-current-weather";
-import SharedHeader from "@/src/shared/ui/shared-header";
-import {
-  getWeatherColor,
-  getWeatherTextColor,
-} from "@/src/shared/utils/weather";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
+import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-
 dayjs.locale("ko");
+
+const { width } = Dimensions.get("window");
 
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const todayFormat = dayjs().format("YYYY년 M월 D일 dddd");
+
+  type RouterPushParam = Parameters<typeof router.push>[0];
+
+  const todayFormat = dayjs().format("YYYY년 M월 D일");
+
   const lat = 36.35;
   const lon = 127.38;
 
-  const { data, isLoading, isError, error } = useCurrentWeather(lat, lon);
+  const { data } = useCurrentWeather(lat, lon);
 
-  const backgroundColor = isLoading
-    ? "#FFFFFF"
-    : getWeatherColor(data?.description);
-  const textColor = isLoading
-    ? "#212121"
-    : getWeatherTextColor(data?.description);
+  const handleNavigation = (path: RouterPushParam) => {
+    router.push(path);
+  };
+
+  const handleLogout = () => {
+    router.replace("/login");
+  };
+
   return (
-    <View style={[styles.container, { paddingTop: insets.top }]}>
-      <SharedHeader>
-        <>
-          <SharedHeader.Side>
-            <SharedHeader.Menu />
-          </SharedHeader.Side>
-          <SharedHeader.Title title="Aiary" />
-          <SharedHeader.Side>
-            <SharedHeader.Setting />
-          </SharedHeader.Side>
-        </>
-      </SharedHeader>
+    <View style={styles.container}>
+      <View style={styles.bgCircle} />
 
-      <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
+      <ScrollView
+        style={styles.content}
+        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 20 }]}
+        showsVerticalScrollIndicator={false}
+      >
+        <View style={styles.header}>
+          <Text style={styles.headerTitle}>Aiary</Text>
+          <View style={styles.headerUnderline} />
+        </View>
+
         <View style={styles.greetingCard}>
-          <View style={styles.greetingHeader}>
-            <Text style={styles.greetingText}>안녕하세요! 👋</Text>
-            <View style={[styles.badge, { backgroundColor }]}>
-              <Text style={[styles.weatherText]}>{data?.description}</Text>
+          <View style={styles.greetingTop}>
+            <View>
+              <Text style={styles.greetingText}>안녕하세요 ✨</Text>
+              <Text style={styles.greetingSubText}>오늘도 소중한 하루를 함께해요</Text>
             </View>
           </View>
-          <Text style={styles.dateText}>{todayFormat}</Text>
-          <Text style={styles.descriptionText}>
-            오늘도 Aiary와 함께 소중한 하루를 기록해보세요
-          </Text>
-        </View>
-        <Navigation />
-        <View style={styles.statsContainer}>
-          <View style={styles.statCard}>
-            <View style={styles.checkmark}>
-              <Text style={styles.checkmarkIcon}>✓</Text>
+
+          <View style={styles.greetingBottom}>
+            <View style={styles.infoRow}>
+              <MaterialCommunityIcons name="calendar-blank-outline" size={16} color="#F88010" />
+              <Text style={styles.infoText}>{todayFormat}</Text>
             </View>
-            <Text style={styles.statNumber}>12</Text>
-            <Text style={styles.statLabel}>작성한 일기</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Text style={styles.fireIcon}>🔥</Text>
-            <Text style={styles.statNumber}>7</Text>
-            <Text style={styles.statLabel}>연속 기록</Text>
+            <View style={styles.infoRow}>
+              <Text style={styles.infoText}>
+                {data?.description || "맑음"}, {data ? `${data.temperature}°C` : "정보 없음"}
+              </Text>
+            </View>
           </View>
         </View>
+
+        <View style={styles.menuContainer}>
+          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/chat")}>
+            <View style={[styles.iconBox, { backgroundColor: "#F88010" }]}>
+              <MaterialCommunityIcons name="chat-processing" size={24} color="#fff" />
+            </View>
+            <View style={styles.menuTextContainer}>
+              <Text style={styles.menuTitle}>채팅 시작하기</Text>
+              <Text style={styles.menuDesc}>AI와 함께 오늘의 이야기를 나눠보세요</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/diary/list")}>
+            <View style={[styles.iconBox, { backgroundColor: "#EAB308" }]}>
+              <MaterialCommunityIcons name="book-open-variant" size={24} color="#fff" />
+            </View>
+            <View style={styles.menuTextContainer}>
+              <Text style={styles.menuTitle}>일기 목록</Text>
+              <Text style={styles.menuDesc}>지금까지의 소중한 기억들을 둘러보세요</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/")}>
+            <View style={[styles.iconBox, { backgroundColor: "#F87171" }]}>
+              <MaterialCommunityIcons name="heart" size={24} color="#fff" />
+            </View>
+            <View style={styles.menuTextContainer}>
+              <Text style={styles.menuTitle}>감정 피드백</Text>
+              <Text style={styles.menuDesc}>나의 감정 변화를 한눈에 확인해보세요</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
+          </TouchableOpacity>
+        </View>
+
+        <LinearGradient
+          colors={["#FEF3C7", "#FFEDD5"]}
+          start={{ x: 0, y: 0.5 }}
+          end={{ x: 1, y: 0.5 }}
+          style={styles.quoteCard}
+        >
+          <MaterialCommunityIcons name="format-quote-open" size={24} color="#F88010" style={{ marginBottom: 8 }} />
+          <Text style={styles.quoteText}>"오늘의 작은 순간들이 모여 내{"\n"}일의 소중한 추억이 됩니다"</Text>
+          <MaterialCommunityIcons name="format-quote-close" size={24} color="#F88010" style={{ marginTop: 8 }} />
+        </LinearGradient>
+
+        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+          <MaterialCommunityIcons name="logout" size={18} color="#666" />
+          <Text style={styles.logoutText}>로그아웃</Text>
+        </TouchableOpacity>
+
+        <View style={{ height: 40 }} />
       </ScrollView>
     </View>
   );
@@ -79,146 +127,154 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#F5F5F7",
+    backgroundColor: "#FFFBF2",
+    overflow: "hidden",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    backgroundColor: "#FFFFFF",
-    borderBottomWidth: 1,
-    borderBottomColor: "#E5E5E5",
-  },
-  menuButton: {
-    padding: 8,
-  },
-  menuIcon: {
-    fontSize: 24,
-    color: "#333",
-  },
-  headerTitle: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  },
-  homeIcon: {
-    fontSize: 20,
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: "600",
-    color: "#333",
-  },
-  settingsButton: {
-    padding: 8,
-  },
-  settingsIcon: {
-    fontSize: 24,
+  bgCircle: {
+    position: "absolute",
+    top: -100,
+    right: -80,
+    width: 300,
+    height: 300,
+    borderRadius: 150,
+    backgroundColor: "#FFF5E0",
   },
   content: {
     flex: 1,
-    padding: 16,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+  },
+  header: {
+    alignItems: "center",
+    marginBottom: 30,
+    marginTop: 64,
+  },
+  headerTitle: {
+    fontSize: 30,
+    lineHeight: 36,
+    fontWeight: "bold",
+    color: "#1F2937",
+  },
+  headerUnderline: {
+    width: 40,
+    height: 3,
+    backgroundColor: "#F88010",
+    marginTop: 4,
   },
   greetingCard: {
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 16,
+    backgroundColor: "#fff",
+    borderRadius: 24,
+    padding: 24,
+    marginBottom: 24,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.03,
     shadowRadius: 8,
     elevation: 2,
   },
-  greetingHeader: {
+  greetingTop: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "flex-start",
+    marginBottom: 20,
+  },
+  greetingText: {
+    fontSize: 20,
+    fontWeight: "bold",
+    color: "#333",
+    marginBottom: 8,
+  },
+  greetingSubText: {
+    fontSize: 14,
+    color: "#666",
+  },
+  greetingBottom: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
   },
-  greetingText: {
-    fontSize: 24,
-    fontWeight: "700",
-  },
-  badge: {
+  infoRow: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#FFF3E0",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    gap: 6,
+  },
+  infoText: {
+    fontSize: 14,
+    color: "#555",
+    fontWeight: "500",
+  },
+  menuContainer: {
+    gap: 16,
+    marginBottom: 24,
+  },
+  menuCard: {
+    backgroundColor: "#fff",
     borderRadius: 20,
-    gap: 4,
-  },
-  sunnyIcon: {
-    fontSize: 16,
-  },
-  weatherText: {
-    fontSize: 14,
-
-    fontWeight: "600",
-  },
-  dateText: {
-    fontSize: 14,
-    color: "#666",
-    marginBottom: 8,
-  },
-  descriptionText: {
-    fontSize: 14,
-    color: "#999",
-    lineHeight: 20,
-  },
-
-  statsContainer: {
+    padding: 25,
     flexDirection: "row",
-    gap: 12,
-    marginTop: 4,
-    marginBottom: 20,
-  },
-  statCard: {
-    flex: 1,
-    backgroundColor: "#FFFFFF",
-    borderRadius: 16,
-    padding: 20,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.05,
+    shadowOpacity: 0.03,
     shadowRadius: 8,
     elevation: 2,
   },
-  statNumber: {
-    fontSize: 32,
-    fontWeight: "700",
-    color: "#333",
-    marginBottom: 4,
-  },
-  statLabel: {
-    fontSize: 14,
-    color: "#999",
-  },
-  checkmark: {
-    position: "absolute",
-    top: 12,
-    left: 12,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: "#E8F5E9",
+  iconBox: {
+    width: 48,
+    height: 48,
+    borderRadius: 16,
     justifyContent: "center",
     alignItems: "center",
+    marginRight: 16,
   },
-  checkmarkIcon: {
-    color: "#4CAF50",
+  menuTextContainer: {
+    flex: 1,
+  },
+  menuTitle: {
+    fontSize: 16,
+    fontWeight: 400,
+    color: "#333",
+    lineHeight: 24,
+    marginBottom: 4,
+  },
+  menuDesc: {
     fontSize: 14,
-    fontWeight: "700",
+    color: "#4B5563",
+    lineHeight: 20,
+    paddingRight: 10,
   },
-  fireIcon: {
-    position: "absolute",
-    top: 12,
-    left: 12,
-    fontSize: 20,
+  quoteCard: {
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: "rgba(253, 230, 138, 0.50)",
+    padding: 24,
+    alignItems: "center",
+    marginBottom: 30,
+  },
+  quoteText: {
+    fontSize: 14,
+    color: "#555",
+    textAlign: "center",
+    lineHeight: 22,
+    fontWeight: "500",
+  },
+  logoutButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 16,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: "#f0f0f0",
+    marginBottom: 20,
+  },
+  logoutText: {
+    marginLeft: 8,
+    color: "#666",
+    fontSize: 14,
+    fontWeight: "600",
   },
 });
 

@@ -1,6 +1,7 @@
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useLocalSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
-import { Platform, Pressable, StyleSheet, Text, TextInput, View, useWindowDimensions } from "react-native";
+import { Platform, Pressable, StyleSheet, TextInput, View, useWindowDimensions } from "react-native";
 import Animated, { useAnimatedKeyboard, useAnimatedStyle } from "react-native-reanimated";
 import { useSendMessage } from "../hooks/use-send-message";
 
@@ -10,9 +11,11 @@ function ChatInput() {
   const [chat, setChat] = useState("");
   const keyboard = useAnimatedKeyboard();
   const { mutate: sendMessage } = useSendMessage(threadId);
+
   const animatedKeyboardStyles = useAnimatedStyle(() => ({
     paddingBottom: Platform.OS === "android" && keyboard.height.value > 0 ? 16 : 0,
   }));
+
   const handleSend = useCallback(async () => {
     const messageContent = chat.trim();
     if (!messageContent) return;
@@ -27,18 +30,18 @@ function ChatInput() {
 
   return (
     <Animated.View style={[styles.container, { width }, animatedKeyboardStyles]}>
-      <View style={styles.inputContainer}>
+      <View style={styles.inputWrapper}>
         <TextInput
           multiline
           value={chat}
           onChangeText={setChat}
           style={styles.textInput}
-          placeholder="오늘 하루는 어땠나요?"
-          placeholderTextColor="#B5B5B5"
+          placeholder="메시지를 입력하세요..."
+          placeholderTextColor="#999"
           numberOfLines={3}
         />
-        <Pressable onPress={handleSend} style={styles.send}>
-          <Text style={styles.sendIcon}>➤</Text>
+        <Pressable onPress={handleSend} style={styles.sendButton}>
+          <MaterialCommunityIcons name="send" size={18} color="#fff" style={{ marginLeft: 2 }} />
         </Pressable>
       </View>
     </Animated.View>
@@ -47,46 +50,43 @@ function ChatInput() {
 
 const styles = StyleSheet.create({
   container: {
-    minHeight: 68,
+    minHeight: 80,
+    backgroundColor: "#FFFBF2",
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+  },
+  inputWrapper: {
+    flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#fff",
-    flexDirection: "row",
+    borderRadius: 30,
+    paddingHorizontal: 20,
     paddingVertical: 10,
-    paddingHorizontal: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#E5E5E5",
-  },
-  inputContainer: {
-    flex: 1,
-    minHeight: 48,
-    flexDirection: "row",
-    alignItems: "center",
-    borderRadius: 24,
-    backgroundColor: "#F5F5F7",
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    borderWidth: 1,
+    borderColor: "#E5E5E5",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.03,
+    shadowRadius: 4,
+    elevation: 2,
   },
   textInput: {
     flex: 1,
     fontSize: 15,
     lineHeight: 20,
-    paddingHorizontal: 4,
-    ...(Platform.OS === "android" ? { textAlignVertical: "center" } : { paddingVertical: 8 }),
-    color: "#000",
+    color: "#333",
+    paddingTop: 0,
+    paddingBottom: 0,
+    maxHeight: 100,
   },
-  send: {
+  sendButton: {
     width: 36,
     height: 36,
+    borderRadius: 18,
+    backgroundColor: "#F88010",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 18,
-    backgroundColor: "#00CEC8",
-    marginLeft: 8,
-  },
-  sendIcon: {
-    color: "#fff",
-    fontSize: 16,
-    fontWeight: "600",
+    marginLeft: 10,
   },
 });
 

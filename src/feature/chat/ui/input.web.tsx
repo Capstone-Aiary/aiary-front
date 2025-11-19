@@ -20,10 +20,7 @@ function WebChatInput() {
     if (!elem || !cloneElem) return;
     cloneElem.value = elem.value;
 
-    elem.rows = Math.min(
-      Math.max(Math.floor(cloneElem.scrollHeight / cloneElem.clientHeight), 1),
-      3
-    );
+    elem.rows = Math.min(Math.max(Math.floor(cloneElem.scrollHeight / cloneElem.clientHeight), 1), 3);
   };
 
   const handleSend = useCallback(async () => {
@@ -42,29 +39,27 @@ function WebChatInput() {
     container: {
       display: "flex",
       width: "100%",
-      minHeight: 68,
+      minHeight: 80,
       alignItems: "center",
-      backgroundColor: "#fff",
-      padding: 16,
-      borderTopWidth: 1,
-      borderTopColor: "#E5E5E5",
-      borderTopStyle: "solid",
+      backgroundColor: "#FFFBF2",
+      padding: "10px 16px",
       boxSizing: "border-box",
     },
     inputContainer: {
       position: "relative",
-      marginLeft: 12,
       display: "flex",
       flex: 1,
       alignItems: "center",
-      borderRadius: "9999px",
-      backgroundColor: "#F5F5F7",
-      paddingTop: 8,
-      paddingBottom: 8,
-      paddingLeft: 16,
-      paddingRight: 16,
+      borderRadius: "30px",
+      backgroundColor: "#fff",
+      paddingTop: 10,
+      paddingBottom: 10,
+      paddingLeft: 20,
+      paddingRight: 10,
       minHeight: 48,
       boxSizing: "border-box",
+      border: "1px solid #E5E5E5",
+      boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.03)",
     },
     chatInput: {
       flex: 1,
@@ -73,11 +68,9 @@ function WebChatInput() {
       backgroundColor: "transparent",
       margin: 0,
       padding: 0,
-      color: "#000",
+      color: "#333",
       fontSize: 15,
       lineHeight: "20px",
-      paddingLeft: 4,
-      paddingRight: 4,
       border: "none",
       outline: "none",
       fontFamily: "inherit",
@@ -98,8 +91,6 @@ function WebChatInput() {
       color: "black",
       fontSize: 15,
       lineHeight: "20px",
-      paddingLeft: 4,
-      paddingRight: 4,
     },
     sendButton: {
       display: "flex",
@@ -108,19 +99,20 @@ function WebChatInput() {
       flexShrink: 0,
       alignItems: "center",
       justifyContent: "center",
-      alignSelf: "flex-end",
-      borderRadius: "9999px",
-      backgroundColor: "#00CEC8",
+      alignSelf: "center",
+      borderRadius: "50%",
+      backgroundColor: "#F88010",
       transition: "background-color 0.2s",
-      marginLeft: 8,
+      marginLeft: 10,
       border: "none",
       padding: 0,
       cursor: "pointer",
     },
     sendIcon: {
       color: "white",
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "600",
+      marginLeft: "2px",
     },
   };
 
@@ -133,7 +125,7 @@ function WebChatInput() {
           value={chat}
           onChange={handleChange}
           rows={1}
-          placeholder="오늘 하루는 어땠나요?"
+          placeholder="메시지를 입력하세요..."
           style={styles.chatInput as React.CSSProperties}
         ></textarea>
 
@@ -146,12 +138,7 @@ function WebChatInput() {
           style={styles.cloneInput as React.CSSProperties}
         ></textarea>
 
-        <button
-          type="button"
-          onClick={handleSend}
-          style={styles.sendButton}
-          aria-label="Send message"
-        >
+        <button type="button" onClick={handleSend} style={styles.sendButton} aria-label="Send message">
           <div style={styles.sendIcon}>➤</div>
         </button>
       </div>
