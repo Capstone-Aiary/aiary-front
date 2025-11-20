@@ -15,6 +15,7 @@ function ChatBalloon({ message, isMe }: ChatBalloonProps) {
           backgroundColor: isMe ? "#F88010" : "#fff",
           borderTopRightRadius: 18,
           borderTopLeftRadius: 18,
+
           borderBottomLeftRadius: isMe ? 18 : 4,
           borderBottomRightRadius: isMe ? 4 : 18,
         },
@@ -27,7 +28,6 @@ function ChatBalloon({ message, isMe }: ChatBalloonProps) {
 
 const styles = StyleSheet.create({
   container: {
-    maxWidth: "80%",
     paddingHorizontal: 18,
     paddingVertical: 14,
     ...Platform.select({
