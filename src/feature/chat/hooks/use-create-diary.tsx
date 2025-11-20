@@ -4,15 +4,15 @@ import { useRouter } from "expo-router";
 
 interface CreateDiaryVariables {
   threadId: string;
-  title: string;
-  mood: string;
+  // title: string;
+  //  mood: string;
 }
 
 interface CreateDiaryResponse {
   id: string;
   threadId: string;
-  title: string;
-  mood: string;
+  //title: string;
+  //  mood: string;
   content: string;
   summary: string;
   createdAt: string;

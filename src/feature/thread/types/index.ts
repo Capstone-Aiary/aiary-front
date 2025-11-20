@@ -9,13 +9,13 @@ export interface ApiError {
 
 export interface PaginatedResponse<T> {
   items: T[];
-  cursor: string | null; 
+  cursor: string | null;
 }
 
 export interface ChatThread {
   id: string; // UUID
   title: string;
-  status: 'active' | 'archived';
+  status: "active" | "archived";
   createdAt: string; // ISO 8601
 }
 
@@ -23,7 +23,7 @@ export interface ChatMessage {
   id: string; // UUID
   threadId: string;
   content: string;
-  sender: 'user' | 'ai';
+  sender: "user" | "ai";
   createdAt: string; // ISO 8601
 }
 
@@ -41,7 +41,7 @@ export interface CreateThreadRequest {
 }
 
 export interface UpdateThreadStatusRequest {
-  status: 'active' | 'archived';
+  status: "active" | "archived";
 }
 
 export interface SendMessageRequest {
@@ -55,6 +55,6 @@ export interface UpdateMessageRequest {
 
 export interface CreateDiaryRequest {
   threadId: string;
-  title: string;
-  mood: string;
+  //title: string;
+  // mood: string;
 }

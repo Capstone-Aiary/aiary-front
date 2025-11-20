@@ -12,7 +12,7 @@ function ChatRoomHeader() {
 
   const handleSubmitDiary = () => {
     if (!id) return;
-    mutation.mutate({ threadId: id, title: "오늘의 일기", mood: "무난함" });
+    mutation.mutate({ threadId: id });
   };
 
   return (

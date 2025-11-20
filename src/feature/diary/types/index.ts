@@ -68,8 +68,8 @@ export interface UpdateMessageRequest {
 
 export interface CreateDiaryRequest {
   threadId: string;
-  title: string;
-  mood: string;
+  // title: string;
+  //  mood: string;
 }
 
 export interface DiaryEmotions {
