@@ -1,5 +1,7 @@
+import { useCreateChat } from "@/src/feature/chat/hooks/use-create-chat";
 import { useCurrentWeather } from "@/src/shared/hooks/use-current-weather";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useQueryClient } from "@tanstack/react-query";
 import dayjs from "dayjs";
 import "dayjs/locale/ko";
 import { LinearGradient } from "expo-linear-gradient";
@@ -24,10 +26,25 @@ const HomeScreen = () => {
 
   const { data } = useCurrentWeather(lat, lon);
 
+  const queryClient = useQueryClient();
+  const mutation = useCreateChat({
+    onSuccess: (responseData) => {
+      console.log("스레드 생성 성공 ID:", responseData);
+      router.push(`/chat/${responseData.threadId}`);
+      queryClient.invalidateQueries({ queryKey: ["threads"] });
+    },
+    onError: (error) => {
+      console.error("스레드 생성 실패:", error.message);
+      return;
+    },
+  });
   const handleNavigation = (path: RouterPushParam) => {
+    if (typeof path === "string" && path.startsWith("/chat")) {
+      mutation.mutate({ title: "오늘의 일기" });
+      return;
+    }
     router.push(path);
   };
-
   const handleLogout = () => {
     router.replace("/login");
   };
