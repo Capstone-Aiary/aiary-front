@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 import * as api from "../api";
 import type { ApiError, CreateDiaryRequest, Diary, DiarySummary } from "../types";
 
@@ -29,13 +30,11 @@ export const useGetDiary = (diaryId: string) => {
 // 일기 생성
 export const useCreateDiary = () => {
   const queryClient = useQueryClient();
+  const router = useRouter();
   return useMutation<Diary, ApiError, CreateDiaryRequest>({
     mutationFn: api.createDiary,
     onSuccess: (data) => {
-      // 성공 시 해당 스레드의 일기 목록 캐시를 무효화
-      queryClient.invalidateQueries({
-        queryKey: diaryKeys.list(data.threadId),
-      });
+      router.push(`/diary/${data.id}`);
     },
   });
 };

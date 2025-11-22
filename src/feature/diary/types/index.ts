@@ -85,6 +85,7 @@ export interface Diary {
   id: string;
   threadId: string;
   content: string;
+  diaryId: string;
   summary: string;
   emotions: DiaryEmotions;
   dominantEmotion: string;
