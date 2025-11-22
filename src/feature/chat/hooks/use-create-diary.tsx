@@ -10,7 +10,7 @@ interface CreateDiaryVariables {
 
 interface CreateDiaryResponse {
   id: string;
-  threadId: string;
+  diaryId: string;
   //title: string;
   //  mood: string;
   content: string;
@@ -51,7 +51,8 @@ export const useCreateDiary = (
   return useMutation<CreateDiaryResponse, Error, CreateDiaryVariables>({
     mutationFn: createDiary,
     onSuccess: (data) => {
-      router.push(`/diary/${data.id}`);
+      console.log("data", data);
+      router.push(`/diary/${data.diaryId}`);
     },
     ...options,
   });

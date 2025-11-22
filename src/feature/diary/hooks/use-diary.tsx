@@ -1,7 +1,6 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "expo-router";
+import { useQuery } from "@tanstack/react-query";
 import * as api from "../api";
-import type { ApiError, CreateDiaryRequest, Diary, DiarySummary } from "../types";
+import type { ApiError, Diary, DiarySummary } from "../types";
 
 const diaryKeys = {
   all: ["diaries"] as const,
@@ -24,18 +23,5 @@ export const useGetDiary = (diaryId: string) => {
     queryKey: diaryKeys.detail(diaryId),
     queryFn: () => api.getDiaryById(diaryId),
     enabled: !!diaryId,
-  });
-};
-
-// 일기 생성
-export const useCreateDiary = () => {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-  return useMutation<Diary, ApiError, CreateDiaryRequest>({
-    mutationFn: api.createDiary,
-    onSuccess: (data) => {
-      console.log("data", data);
-      router.push(`/diary/${data.diaryId}`);
-    },
   });
 };
