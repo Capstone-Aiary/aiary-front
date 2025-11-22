@@ -34,7 +34,7 @@ export const useCreateDiary = () => {
   return useMutation<Diary, ApiError, CreateDiaryRequest>({
     mutationFn: api.createDiary,
     onSuccess: (data) => {
-      router.push(`/diary/${data.id}`);
+      router.push(`/diary/${data.diaryId}`);
     },
   });
 };
