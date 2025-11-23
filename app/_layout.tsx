@@ -43,7 +43,7 @@ export function RootLayoutNav() {
     if (!user && !inAuthGroup) {
       router.replace("/login");
     } else if (user && inAuthGroup) {
-      router.replace("/");
+      router.replace("/home");
     }
   }, [user, segments, isLoading]);
 
