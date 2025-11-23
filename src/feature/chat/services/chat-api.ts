@@ -9,16 +9,32 @@ class ChatSSEService {
   private pendingMessages = new Map<string, Chat>();
 
   async startStream(threadId: string): Promise<void> {
+    console.log("🚀 [1] startStream 시작! threadId:", threadId);
+
+    // [체크 1] 이미 연결된 상태인지 확인
     if (this.controllers.has(threadId)) {
+      console.log("🛑 [2] 이미 연결된 스트림입니다. 함수 종료.");
       return;
     }
 
     const controller = new AbortController();
     this.controllers.set(threadId, controller);
 
-    const token = localStorage.getItem("accessToken");
     const url = `${process.env.EXPO_PUBLIC_BACKEND_URL}/chat/stream?threadId=${threadId}`;
+    const token = localStorage.getItem("accessToken");
+    // [체크 2] 토큰 확인
+    console.log("🔑 [3] 토큰 값:", token ? "있음(길이:" + token.length + ")" : "NULL");
 
+    const baseUrl = process.env.EXPO_PUBLIC_BACKEND_URL;
+    // [체크 3] 환경변수(URL) 확인
+    console.log("🌐 [4] 백엔드 URL:", baseUrl);
+
+    if (!baseUrl) {
+      console.error("❌ [오류] 환경변수 EXPO_PUBLIC_BACKEND_URL이 없습니다!");
+      return;
+    }
+
+    console.log("📡 [5] 요청 보낼 주소:", url);
     await fetchEventSource(url, {
       method: "GET",
       headers: {
