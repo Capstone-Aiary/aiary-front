@@ -1,299 +1,184 @@
-import { useLogout } from "@/src/feature/auth/hooks/auth";
-import { useCreateChat } from "@/src/feature/chat/hooks/use-create-chat";
-import { useCurrentWeather } from "@/src/shared/hooks/use-current-weather";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { useQueryClient } from "@tanstack/react-query";
-import dayjs from "dayjs";
-import "dayjs/locale/ko";
-import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
-import React from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-dayjs.locale("ko");
+import React, { useEffect, useRef } from "react";
+import { Animated, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 const { width } = Dimensions.get("window");
 
-const HomeScreen = () => {
-  const insets = useSafeAreaInsets();
+export default function WelcomeScreen() {
   const router = useRouter();
-  const { logout } = useLogout();
-  type RouterPushParam = Parameters<typeof router.push>[0];
+  const floatAnim = useRef(new Animated.Value(0)).current;
 
-  const todayFormat = dayjs().format("YYYY년 M월 D일");
+  useEffect(() => {
+    Animated.loop(
+      Animated.sequence([
+        Animated.timing(floatAnim, {
+          toValue: -15,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+        Animated.timing(floatAnim, {
+          toValue: 0,
+          duration: 1500,
+          useNativeDriver: true,
+        }),
+      ])
+    ).start();
+  }, [floatAnim]);
 
-  const lat = 36.35;
-  const lon = 127.38;
-
-  const { data } = useCurrentWeather(lat, lon);
-
-  const queryClient = useQueryClient();
-  const mutation = useCreateChat({
-    onSuccess: (responseData) => {
-      console.log("스레드 생성 성공 ID:", responseData);
-      router.push(`/chat/${responseData.threadId}`);
-      queryClient.invalidateQueries({ queryKey: ["threads"] });
-    },
-    onError: (error) => {
-      console.error("스레드 생성 실패:", error.message);
-      return;
-    },
-  });
-  const handleNavigation = (path: RouterPushParam) => {
-    if (typeof path === "string" && path.startsWith("/chat")) {
-      mutation.mutate({ title: "오늘의 일기" });
-      return;
-    }
-    router.push(path);
+  const handleSignUp = () => {
+    router.push("/signup");
   };
-  const handleLogout = () => {
-    logout();
+
+  const handleLogin = () => {
+    router.push("/login");
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.bgCircle} />
+      <View style={styles.topCircle} />
+      <View style={styles.bottomCircle} />
 
-      <ScrollView
-        style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 20 }]}
-        showsVerticalScrollIndicator={false}
-      >
-        <View style={styles.header}>
-          <Text style={styles.headerTitle}>Aiary</Text>
-          <View style={styles.headerUnderline} />
-        </View>
+      <Animated.View style={[styles.logoContainer, { transform: [{ translateY: floatAnim }] }]}>
+        <Image source={require("../assets/images/feather-icon.png")} style={styles.icon} />
+      </Animated.View>
 
-        <View style={styles.greetingCard}>
-          <View style={styles.greetingTop}>
-            <View>
-              <Text style={styles.greetingText}>안녕하세요 ✨</Text>
-              <Text style={styles.greetingSubText}>오늘도 소중한 하루를 함께해요</Text>
-            </View>
-          </View>
+      <Text style={styles.appName}>Aiary</Text>
+      <View style={styles.textContainer}>
+        <Text style={styles.slogan}>오늘의 이야기를 AI와 함께</Text>
+        <Text style={styles.slogan}>기록해보세요</Text>
+      </View>
 
-          <View style={styles.greetingBottom}>
-            <View style={styles.infoRow}>
-              <MaterialCommunityIcons name="calendar-blank-outline" size={16} color="#F88010" />
-              <Text style={styles.infoText}>{todayFormat}</Text>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoText}>
-                {data?.description || "맑음"}, {data ? `${data.temperature}°C` : "정보 없음"}
-              </Text>
-            </View>
-          </View>
-        </View>
+      <View style={styles.dotsContainer}>
+        <View style={[styles.dot, styles.dotActive]} />
+        <View style={styles.dot} />
+        <View style={styles.dot} />
+      </View>
 
-        <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/chat")}>
-            <View style={[styles.iconBox, { backgroundColor: "#F88010" }]}>
-              <MaterialCommunityIcons name="chat-processing" size={24} color="#fff" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuTitle}>채팅 시작하기</Text>
-              <Text style={styles.menuDesc}>AI와 함께 오늘의 이야기를 나눠보세요</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
-          </TouchableOpacity>
+      <View style={styles.spacer} />
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/diary/list")}>
-            <View style={[styles.iconBox, { backgroundColor: "#EAB308" }]}>
-              <MaterialCommunityIcons name="book-open-variant" size={24} color="#fff" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuTitle}>일기 목록</Text>
-              <Text style={styles.menuDesc}>지금까지의 소중한 기억들을 둘러보세요</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
-          </TouchableOpacity>
+      <TouchableOpacity style={[styles.button, styles.primaryButton]} onPress={handleSignUp}>
+        <Text style={styles.primaryButtonText}>시작하기</Text>
+      </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/")}>
-            <View style={[styles.iconBox, { backgroundColor: "#F87171" }]}>
-              <MaterialCommunityIcons name="heart" size={24} color="#fff" />
-            </View>
-            <View style={styles.menuTextContainer}>
-              <Text style={styles.menuTitle}>감정 피드백</Text>
-              <Text style={styles.menuDesc}>나의 감정 변화를 한눈에 확인해보세요</Text>
-            </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
-          </TouchableOpacity>
-        </View>
-
-        <LinearGradient
-          colors={["#FEF3C7", "#FFEDD5"]}
-          start={{ x: 0, y: 0.5 }}
-          end={{ x: 1, y: 0.5 }}
-          style={styles.quoteCard}
-        >
-          <MaterialCommunityIcons name="format-quote-open" size={24} color="#F88010" style={{ marginBottom: 8 }} />
-          <Text style={styles.quoteText}>"오늘의 작은 순간들이 모여 내{"\n"}일의 소중한 추억이 됩니다"</Text>
-          <MaterialCommunityIcons name="format-quote-close" size={24} color="#F88010" style={{ marginTop: 8 }} />
-        </LinearGradient>
-
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-          <MaterialCommunityIcons name="logout" size={18} color="#666" />
-          <Text style={styles.logoutText}>로그아웃</Text>
-        </TouchableOpacity>
-
-        <View style={{ height: 40 }} />
-      </ScrollView>
+      <TouchableOpacity style={[styles.button, styles.secondaryButton]} onPress={handleLogin}>
+        <Text style={styles.secondaryButtonText}>이미 계정이 있어요</Text>
+      </TouchableOpacity>
     </View>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: "#FFFBF2",
+    paddingHorizontal: 24,
     overflow: "hidden",
   },
-  bgCircle: {
+  topCircle: {
     position: "absolute",
-    top: -100,
-    right: -80,
-    width: 300,
-    height: 300,
-    borderRadius: 150,
+    top: -50,
+    right: -50,
+    width: 200,
+    height: 200,
+    borderRadius: 100,
     backgroundColor: "#FFF5E0",
   },
-  content: {
-    flex: 1,
+  bottomCircle: {
+    position: "absolute",
+    bottom: 150,
+    left: -50,
+    width: 250,
+    height: 250,
+    borderRadius: 125,
+    backgroundColor: "#FFF5E0",
   },
-  scrollContent: {
-    paddingHorizontal: 20,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 30,
-    marginTop: 64,
-  },
-  headerTitle: {
-    fontSize: 30,
-    lineHeight: 36,
-    fontWeight: "bold",
-    color: "#1F2937",
-  },
-  headerUnderline: {
-    width: 40,
-    height: 3,
-    backgroundColor: "#F88010",
-    marginTop: 4,
-  },
-  greetingCard: {
-    backgroundColor: "#fff",
-    borderRadius: 24,
-    padding: 24,
-    marginBottom: 24,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  greetingTop: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "flex-start",
-    marginBottom: 20,
-  },
-  greetingText: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#333",
-    marginBottom: 8,
-  },
-  greetingSubText: {
-    fontSize: 14,
-    color: "#666",
-  },
-  greetingBottom: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 6,
-  },
-  infoText: {
-    fontSize: 14,
-    color: "#555",
-    fontWeight: "500",
-  },
-  menuContainer: {
-    gap: 16,
-    marginBottom: 24,
-  },
-  menuCard: {
-    backgroundColor: "#fff",
-    borderRadius: 20,
-    padding: 25,
-    flexDirection: "row",
-    alignItems: "center",
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.03,
-    shadowRadius: 8,
-    elevation: 2,
-  },
-  iconBox: {
-    width: 48,
-    height: 48,
-    borderRadius: 16,
+  logoContainer: {
+    marginTop: 80,
+    width: 100,
+    height: 100,
+    backgroundColor: "#E86A10",
+    borderRadius: 25,
     justifyContent: "center",
     alignItems: "center",
-    marginRight: 16,
+    marginBottom: 20,
+    shadowColor: "#E86A10",
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 10,
   },
-  menuTextContainer: {
-    flex: 1,
+  icon: {
+    width: 50,
+    height: 50,
+    resizeMode: "contain",
+    tintColor: "#fff",
   },
-  menuTitle: {
+  appName: {
+    fontSize: 40,
+    fontWeight: "bold",
+    color: "#000",
+    marginBottom: 10,
+  },
+  textContainer: {
+    alignItems: "center",
+    marginBottom: 20,
+  },
+  slogan: {
     fontSize: 16,
-    fontWeight: 400,
-    color: "#333",
+    color: "#666",
+    textAlign: "center",
     lineHeight: 24,
-    marginBottom: 4,
   },
-  menuDesc: {
-    fontSize: 14,
-    color: "#4B5563",
-    lineHeight: 20,
-    paddingRight: 10,
-  },
-  quoteCard: {
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: "rgba(253, 230, 138, 0.50)",
-    padding: 24,
-    alignItems: "center",
+  dotsContainer: {
+    flexDirection: "row",
+    gap: 8,
     marginBottom: 30,
   },
-  quoteText: {
-    fontSize: 14,
-    color: "#555",
-    textAlign: "center",
-    lineHeight: 22,
-    fontWeight: "500",
+  dot: {
+    width: 8,
+    height: 8,
+    borderRadius: 4,
+    backgroundColor: "#E8A510",
+    opacity: 0.5,
   },
-  logoutButton: {
-    flexDirection: "row",
+  dotActive: {
+    opacity: 1,
+  },
+  spacer: {
+    flex: 1,
+  },
+  button: {
+    width: "100%",
+    paddingVertical: 16,
+    borderRadius: 16,
     alignItems: "center",
     justifyContent: "center",
-    padding: 16,
-    backgroundColor: "#fff",
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: "#f0f0f0",
-    marginBottom: 20,
+    marginBottom: 12,
   },
-  logoutText: {
-    marginLeft: 8,
-    color: "#666",
-    fontSize: 14,
-    fontWeight: "600",
+  primaryButton: {
+    backgroundColor: "#E86A10",
+    shadowColor: "#E86A10",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+  primaryButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  secondaryButton: {
+    backgroundColor: "#fff",
+    borderWidth: 1,
+    borderColor: "#FFE0B2",
+    marginBottom: 50,
+  },
+  secondaryButtonText: {
+    color: "#333",
+    fontSize: 16,
+    fontWeight: "500",
   },
 });
-
-export default HomeScreen;

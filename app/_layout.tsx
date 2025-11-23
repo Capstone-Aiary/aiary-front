@@ -3,8 +3,7 @@ import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-quer
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
-import { ActivityIndicator } from "react-native";
-import { View } from "react-native-reanimated/lib/typescript/Animated";
+import { ActivityIndicator, View } from "react-native";
 const queryClient = new QueryClient();
 
 const fetchUserInfo = async () => {
@@ -38,12 +37,12 @@ export default function RootLayout() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === "login" || segments[0] === "signup" || segments[0] === "index";
+    const inAuthGroup = segments[0] === "home" || segments[0] === "login" || segments[0] === "signup";
 
     if (!user && !inAuthGroup) {
       router.replace("/login");
     } else if (user && inAuthGroup) {
-      router.replace("/home");
+      router.replace("/");
     }
   }, [user, segments, isLoading]);
 
