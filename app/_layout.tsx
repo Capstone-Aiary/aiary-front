@@ -4,6 +4,7 @@ import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useEffect } from "react";
 import { ActivityIndicator, View } from "react-native";
+
 const queryClient = new QueryClient();
 
 const fetchUserInfo = async () => {
@@ -23,7 +24,9 @@ const fetchUserInfo = async () => {
   }
 };
 
-export default function RootLayout() {
+export function RootLayoutNav() {
+  const queryClient = new QueryClient();
+
   const router = useRouter();
   const segments = useSegments(); // 현재 URL 경로 파악용
 
@@ -55,21 +58,28 @@ export default function RootLayout() {
   }
 
   return (
-    <QueryClientProvider client={queryClient}>
+    <>
       <Stack>
         <Stack.Screen name="index" options={{ headerShown: false }} />
         <Stack.Screen name="signup" options={{ headerShown: false }} />
         <Stack.Screen name="login" options={{ headerShown: false }} />
-
         <Stack.Screen name="home" options={{ headerShown: false }} />
         <Stack.Screen name="chat" options={{ headerShown: false }} />
         <Stack.Screen name="chat/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="diary/index" options={{ headerShown: false }} />
         <Stack.Screen name="diary/[id]" options={{ headerShown: false }} />
-
         <Stack.Screen name="setting" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
+    </>
+  );
+}
+
+// 3. 최상위 Provider
+export default function RootLayout() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootLayoutNav />
     </QueryClientProvider>
   );
 }
