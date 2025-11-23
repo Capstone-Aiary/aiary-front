@@ -13,6 +13,11 @@ export interface LoginRequest {
 
 export interface LoginResponse {
   accessToken: string;
+  refreshToken: string;
+  user: {
+    nickname: string;
+    user_name: string;
+  };
 }
 
 export interface ApiError {

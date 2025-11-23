@@ -1,3 +1,4 @@
+import { useLogout } from "@/src/feature/auth/hooks/auth";
 import { useCreateChat } from "@/src/feature/chat/hooks/use-create-chat";
 import { useCurrentWeather } from "@/src/shared/hooks/use-current-weather";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -16,7 +17,7 @@ const { width } = Dimensions.get("window");
 const HomeScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-
+  const { logout } = useLogout();
   type RouterPushParam = Parameters<typeof router.push>[0];
 
   const todayFormat = dayjs().format("YYYY년 M월 D일");
@@ -46,7 +47,7 @@ const HomeScreen = () => {
     router.push(path);
   };
   const handleLogout = () => {
-    router.replace("/login");
+    logout();
   };
 
   return (

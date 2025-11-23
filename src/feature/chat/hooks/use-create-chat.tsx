@@ -1,3 +1,4 @@
+import apiClient from "@/src/shared/api/axios";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import axios from "axios";
 
@@ -18,7 +19,7 @@ const createThread = async (variables: CreateThreadVariables): Promise<CreateThr
   const API_ENDPOINT = "/chat/threads";
 
   try {
-    const { data } = await axios.post<CreateThreadResponse>(
+    const { data } = await apiClient.post<CreateThreadResponse>(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}${API_ENDPOINT}`,
       variables
     );
