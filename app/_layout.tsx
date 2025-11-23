@@ -17,9 +17,6 @@ const fetchUserInfo = async () => {
 
     return data;
   } catch (error) {
-    console.log("세션 만료됨");
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
     return null;
   }
 };
