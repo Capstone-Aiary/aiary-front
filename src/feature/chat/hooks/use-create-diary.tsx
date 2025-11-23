@@ -1,3 +1,4 @@
+import apiClient from "@/src/shared/api/axios";
 import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter } from "expo-router";
@@ -27,7 +28,7 @@ const createDiary = async (variables: CreateDiaryVariables): Promise<CreateDiary
   const API_ENDPOINT = "/diaries";
 
   try {
-    const { data } = await axios.post<CreateDiaryResponse>(
+    const { data } = await apiClient.post<CreateDiaryResponse>(
       `${process.env.EXPO_PUBLIC_BACKEND_URL}${API_ENDPOINT}`,
       variables
     );
