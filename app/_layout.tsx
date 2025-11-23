@@ -13,7 +13,7 @@ const fetchUserInfo = async () => {
   if (!token) return null;
 
   try {
-    const { data } = await apiClient.get("/user/me");
+    const { data } = await apiClient.get("/auth/me");
 
     return data;
   } catch (error) {
