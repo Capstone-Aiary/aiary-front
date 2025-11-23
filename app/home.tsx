@@ -97,7 +97,7 @@ const HomeScreen = () => {
             <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/diary/list")}>
+          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/diary")}>
             <View style={[styles.iconBox, { backgroundColor: "#EAB308" }]}>
               <MaterialCommunityIcons name="book-open-variant" size={24} color="#fff" />
             </View>
