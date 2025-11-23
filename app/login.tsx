@@ -29,10 +29,6 @@ export default function LoginScreen() {
     login(
       { user_name: email, password },
       {
-        onSuccess: (data) => {
-          Alert.alert("로그인 성공", "Aiary에 오신 것을 환영합니다!");
-          router.replace("/home");
-        },
         onError: (error) => {
           Alert.alert("로그인 실패", error.message || "사용자 이름 또는 비밀번호를 확인해주세요.");
         },
