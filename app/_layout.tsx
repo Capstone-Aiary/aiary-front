@@ -25,8 +25,6 @@ const fetchUserInfo = async () => {
 };
 
 export function RootLayoutNav() {
-  const queryClient = new QueryClient();
-
   const router = useRouter();
   const segments = useSegments(); // 현재 URL 경로 파악용
 
