@@ -1,9 +1,9 @@
 import { useGetDiary } from "@/src/feature/diary/hooks/use-diary";
 import SharedHeader from "@/src/shared/ui/shared-header";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { ScrollView, StyleSheet, Text, View } from "react-native";
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 interface DiaryEmotions {
@@ -26,6 +26,7 @@ const EMOTION_CONFIG: Record<keyof DiaryEmotions, { label: string; color: string
 
 const DiaryDetailScreen = () => {
   const insets = useSafeAreaInsets();
+  const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data } = useGetDiary(id);
 
@@ -33,6 +34,12 @@ const DiaryDetailScreen = () => {
     if (!dateString) return "2024년 11월 17일";
     const date = new Date(dateString);
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
+
+  const handleGoToReport = () => {
+    if (id) {
+      router.push(`/report/${id}`);
+    }
   };
 
   const moodScore = data ? Math.round(data.overallMoodScore * 100) : 0;
@@ -122,6 +129,17 @@ const DiaryDetailScreen = () => {
           </View>
           <Text style={styles.aiText}>{data?.recommendation || "오늘 하루도 수고 많으셨어요."}</Text>
         </View>
+
+        <TouchableOpacity style={styles.reportButton} onPress={handleGoToReport} activeOpacity={0.9}>
+          <View style={styles.reportIconContainer}>
+            <MaterialCommunityIcons name="chart-line-variant" size={24} color="#FFF" />
+          </View>
+          <View style={styles.reportTextContainer}>
+            <Text style={styles.reportBtnTitle}>감정 리포트 보기</Text>
+            <Text style={styles.reportBtnSubtitle}>나의 감정 변화를 확인해보세요</Text>
+          </View>
+          <MaterialCommunityIcons name="chevron-right" size={24} color="#FFF" />
+        </TouchableOpacity>
 
         <View style={styles.whiteCard}>
           <View style={styles.cardHeader}>
@@ -282,7 +300,44 @@ const styles = StyleSheet.create({
     color: "#555",
     fontStyle: "italic",
   },
+  reportButton: {
+    backgroundColor: "#FF8E26",
+    borderRadius: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
+    flexDirection: "row",
+    alignItems: "center",
 
+    shadowColor: "#FF8E26",
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  reportIconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 14,
+    backgroundColor: "rgba(255,255,255,0.25)",
+    justifyContent: "center",
+    alignItems: "center",
+    marginRight: 16,
+  },
+  reportTextContainer: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  reportBtnTitle: {
+    color: "#FFFFFF",
+    fontSize: 17,
+    fontWeight: "bold",
+    marginBottom: 3,
+  },
+  reportBtnSubtitle: {
+    color: "rgba(255,255,255,0.9)",
+    fontSize: 13,
+    fontWeight: "500",
+  },
   bodyText: {
     fontSize: 15,
     lineHeight: 26,
