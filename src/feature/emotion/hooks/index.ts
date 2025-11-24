@@ -19,7 +19,8 @@ export const useEmotionReport = (diaryId: string) => {
 export const useEmotionReportData = (specificDiaryId?: string) => {
   const { data: diaries, isLoading: isListLoading, isError: isListError } = useGetDiaries();
 
-  const targetId = specificDiaryId || (diaries && diaries.length > 0 ? diaries[0].id : null);
+  const targetId =
+    specificDiaryId === "recent" ? (diaries && diaries.length > 0 ? diaries[0].id : null) : specificDiaryId || null;
 
   const {
     data: report,

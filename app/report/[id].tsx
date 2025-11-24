@@ -177,7 +177,6 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 20,
     paddingTop: 10,
     paddingBottom: 40,
     gap: 16,
@@ -188,20 +187,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: "#FFF9F0",
   },
-  header: {
-    padding: 20,
-    alignItems: "center",
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-  },
-  headerDate: {
-    fontSize: 14,
-    color: "#E57373",
-    marginTop: 4,
-  },
+
   scoreCard: {
     backgroundColor: "#FFF",
     marginHorizontal: 20,

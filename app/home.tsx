@@ -108,7 +108,7 @@ const HomeScreen = () => {
             <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/report")}>
+          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/report/recent")}>
             <View style={[styles.iconBox, { backgroundColor: "#F87171" }]}>
               <MaterialCommunityIcons name="heart" size={24} color="#fff" />
             </View>
