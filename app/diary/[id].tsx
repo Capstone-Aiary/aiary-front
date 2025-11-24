@@ -49,7 +49,7 @@ const DiaryDetailScreen = () => {
     <View style={[styles.container, { paddingTop: insets.top }]}>
       <SharedHeader>
         <SharedHeader.Side>
-          <SharedHeader.Back />
+          <SharedHeader.Back path={"/home"} />
         </SharedHeader.Side>
         <SharedHeader.Title title="오늘의 일기" subtitle={formatDate(data?.createdAt)} />
         <SharedHeader.Side>

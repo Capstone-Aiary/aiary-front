@@ -1,9 +1,11 @@
 import { useEmotionReportData } from "@/src/feature/emotion/hooks";
 import { EmotionScores } from "@/src/feature/emotion/type";
+import SharedHeader from "@/src/shared/ui/shared-header";
 import { Image } from "expo-image";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { ActivityIndicator, Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Dimensions, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -32,7 +34,10 @@ const EmotionCard = ({ type, value }: { type: string; value: number }) => {
   return (
     <View style={styles.smallCard}>
       <View style={styles.iconCircle}>
-        <Text style={{ fontSize: 24 }}>{config.icon}</Text>
+        <Image
+          source={EMOTION_ICONS[config.icon] || EMOTION_ICONS["happy"]}
+          style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
+        />
       </View>
       <Text style={styles.cardLabel}>{config.label}</Text>
 
@@ -46,7 +51,8 @@ const EmotionCard = ({ type, value }: { type: string; value: number }) => {
 
 const ReportScreen = () => {
   const { id } = useLocalSearchParams<{ id: string }>();
-
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const { report, isLoading, hasDiaries, isError } = useEmotionReportData(id);
   if (isLoading) {
     return (
@@ -78,6 +84,9 @@ const ReportScreen = () => {
         <Text style={styles.title}>분석 중입니다 ⏳</Text>
         <Text style={styles.subText}>AI가 일기의 감정을 분석하고 있어요.</Text>
         <Text style={styles.subText}>잠시 후 다시 확인해주세요.</Text>
+        <Pressable style={styles.title} onPress={() => router.push("/")}>
+          홈으로 이동
+        </Pressable>
       </View>
     );
   }
@@ -87,72 +96,91 @@ const ReportScreen = () => {
   const dateStr = new Date(createdAt).toLocaleDateString("ko-KR", { year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={{ paddingBottom: 40 }}>
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>감정 리포트</Text>
-        <Text style={styles.headerDate}>{dateStr}</Text>
-      </View>
-
-      <View style={styles.scoreCard}>
-        <View style={[styles.scoreCircle, { borderColor: domConfig.color }]}>
-          <Text style={styles.scoreText}>{Math.round(overallMoodScore * 100)}</Text>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
+      <SharedHeader>
+        <SharedHeader.Side>
+          <SharedHeader.Back />
+        </SharedHeader.Side>
+        <SharedHeader.Title title="감정 리포트" subtitle={dateStr} />
+        <SharedHeader.Side>
+          <></>
+        </SharedHeader.Side>
+      </SharedHeader>
+      <ScrollView
+        style={styles.content}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.scrollContent}
+      >
+        <View style={styles.scoreCard}>
+          <View style={[styles.scoreCircle, { borderColor: domConfig.color }]}>
+            <Text style={styles.scoreText}>{Math.round(overallMoodScore * 100)}</Text>
+          </View>
+          <Text style={styles.scoreTitle}>오늘의 종합 기분</Text>
+          <View style={styles.recommendationBox}>
+            <Text style={styles.recommendationText}>{recommendation}</Text>
+          </View>
         </View>
-        <Text style={styles.scoreTitle}>오늘의 종합 기분</Text>
-        <View style={styles.recommendationBox}>
-          <Text style={styles.recommendationText}>{recommendation}</Text>
-        </View>
-      </View>
 
-      <View style={[styles.mainCard, { backgroundColor: "#E0F7FA" }]}>
-        <View style={{ marginBottom: 10 }}>
-          <Image
-            source={EMOTION_ICONS[domConfig.icon] || EMOTION_ICONS["happy"]}
-            style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
-          />
-        </View>
-        <Text style={styles.mainCardTitle}>가장 강한 감정</Text>
-        <Text style={[styles.mainCardEmotion, { color: domConfig.color }]}>{domConfig.label}</Text>
+        <View style={[styles.mainCard, { backgroundColor: "#E0F7FA" }]}>
+          <View style={{ marginBottom: 10 }}>
+            <Image
+              source={EMOTION_ICONS[domConfig.icon] || EMOTION_ICONS["happy"]}
+              style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
+            />
+          </View>
+          <Text style={styles.mainCardTitle}>가장 강한 감정</Text>
+          <Text style={[styles.mainCardEmotion, { color: domConfig.color }]}>{domConfig.label}</Text>
 
-        <View style={styles.progressBarBgLarge}>
-          <View
-            style={[
-              styles.progressBarFill,
-              {
-                width: `${Math.round(emotions[dominantEmotion as keyof EmotionScores] * 100)}%`,
-                backgroundColor: domConfig.color,
-              },
-            ]}
-          />
+          <View style={styles.progressBarBgLarge}>
+            <View
+              style={[
+                styles.progressBarFill,
+                {
+                  width: `${Math.round(emotions[dominantEmotion as keyof EmotionScores] * 100)}%`,
+                  backgroundColor: domConfig.color,
+                },
+              ]}
+            />
+          </View>
+          <Text style={styles.percentageTextLarge}>
+            {Math.round(emotions[dominantEmotion as keyof EmotionScores] * 100)}%
+          </Text>
         </View>
-        <Text style={styles.percentageTextLarge}>
-          {Math.round(emotions[dominantEmotion as keyof EmotionScores] * 100)}%
-        </Text>
-      </View>
 
-      <View style={styles.gridContainer}>
-        {Object.keys(emotions).map((key) => (
-          <EmotionCard key={key} type={key} value={emotions[key as keyof EmotionScores]} />
-        ))}
-      </View>
-
-      <View style={styles.insightCard}>
-        <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
-          <Text style={{ fontSize: 20, marginRight: 8 }}>💡</Text>
-          <Text style={styles.insightTitle}>오늘의 인사이트</Text>
+        <View style={styles.gridContainer}>
+          {Object.keys(emotions).map((key) => (
+            <EmotionCard key={key} type={key} value={emotions[key as keyof EmotionScores]} />
+          ))}
         </View>
-        <Text style={styles.insightText}>• {recommendation}</Text>
-        <Text style={styles.insightText}>• {domConfig.label}이(가) 가장 두드러진 하루였습니다.</Text>
-        {overallMoodScore > 0.7 && <Text style={styles.insightText}>• 긍정적인 에너지가 충만한 상태입니다!</Text>}
-        {emotions.tiredness > 0.5 && <Text style={styles.insightText}>• 피로도가 높으니 휴식을 취해보세요.</Text>}
-      </View>
-    </ScrollView>
+
+        <View style={styles.insightCard}>
+          <View style={{ flexDirection: "row", alignItems: "center", marginBottom: 10 }}>
+            <Text style={{ fontSize: 20, marginRight: 8 }}>💡</Text>
+            <Text style={styles.insightTitle}>오늘의 인사이트</Text>
+          </View>
+          <Text style={styles.insightText}>• {recommendation}</Text>
+          <Text style={styles.insightText}>• {domConfig.label}이(가) 가장 두드러진 하루였습니다.</Text>
+          {overallMoodScore > 0.7 && <Text style={styles.insightText}>• 긍정적인 에너지가 충만한 상태입니다!</Text>}
+          {emotions.tiredness > 0.5 && <Text style={styles.insightText}>• 피로도가 높으니 휴식을 취해보세요.</Text>}
+        </View>
+      </ScrollView>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#FFF9F0",
+    backgroundColor: "#FFFBF2",
+  },
+  content: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingHorizontal: 20,
+    paddingTop: 10,
+    paddingBottom: 40,
+    gap: 16,
   },
   center: {
     flex: 1,

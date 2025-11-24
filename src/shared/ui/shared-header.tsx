@@ -19,10 +19,11 @@ function PlaceHoder() {
   return <View style={styles.placeholder} />;
 }
 
-function BackButton() {
+function BackButton({ path }: { path?: string }) {
   const router = useRouter();
+  type RouterPushParam = Parameters<typeof router.push>[0];
   return (
-    <Pressable onPress={() => router.back()} style={styles.iconButton}>
+    <Pressable onPress={() => (path ? router.push(path as RouterPushParam) : router.back())} style={styles.iconButton}>
       <Image source={require("@/assets/images/back-icon.png")} style={styles.backIcon} />
     </Pressable>
   );
