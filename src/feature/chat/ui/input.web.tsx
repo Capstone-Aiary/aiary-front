@@ -20,7 +20,10 @@ function WebChatInput() {
     if (!elem || !cloneElem) return;
     cloneElem.value = elem.value;
 
-    elem.rows = Math.min(Math.max(Math.floor(cloneElem.scrollHeight / cloneElem.clientHeight), 1), 3);
+    elem.rows = Math.min(
+      Math.max(Math.floor(cloneElem.scrollHeight / cloneElem.clientHeight), 1),
+      3
+    );
   };
 
   const handleSend = useCallback(async () => {
@@ -69,7 +72,7 @@ function WebChatInput() {
       margin: 0,
       padding: 0,
       color: "#333",
-      fontSize: 15,
+      fontSize: 16,
       lineHeight: "20px",
       border: "none",
       outline: "none",
@@ -89,7 +92,7 @@ function WebChatInput() {
       margin: 0,
       padding: 0,
       color: "black",
-      fontSize: 15,
+      fontSize: 16,
       lineHeight: "20px",
     },
     sendButton: {
@@ -138,7 +141,12 @@ function WebChatInput() {
           style={styles.cloneInput as React.CSSProperties}
         ></textarea>
 
-        <button type="button" onClick={handleSend} style={styles.sendButton} aria-label="Send message">
+        <button
+          type="button"
+          onClick={handleSend}
+          style={styles.sendButton}
+          aria-label="Send message"
+        >
           <div style={styles.sendIcon}>➤</div>
         </button>
       </div>

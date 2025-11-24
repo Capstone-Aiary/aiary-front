@@ -5,7 +5,13 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
-import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  FlatList,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const ICON_PRESETS = [
@@ -19,10 +25,10 @@ const ICON_PRESETS = [
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, "0")}.${String(date.getDate()).padStart(
+  return `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(
     2,
     "0"
-  )}`;
+  )}.${String(date.getDate()).padStart(2, "0")}`;
 };
 
 const getRelativeTime = (dateString: string) => {
@@ -59,16 +65,26 @@ const DiaryItem = React.memo(({ item }: { item: DiarySummary }) => {
   const router = useRouter();
 
   const iconStyle = useMemo(() => {
-    const index = item.id.split("").reduce((acc, char) => acc + char.charCodeAt(0), 0);
+    const index = item.id
+      .split("")
+      .reduce((acc, char) => acc + char.charCodeAt(0), 0);
     return ICON_PRESETS[index % ICON_PRESETS.length];
   }, [item.id]);
 
   const formattedDate = dayjs(item.createdAt).format("YYYY년 M월 D일");
   return (
-    <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => router.push(`/diary/${item.id}`)}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.9}
+      onPress={() => router.push(`/diary/${item.id}`)}
+    >
       <View style={styles.cardLeft}>
         <View style={[styles.iconCircle, { backgroundColor: iconStyle.color }]}>
-          <MaterialCommunityIcons name={iconStyle.icon as any} size={24} color="#FFF" />
+          <MaterialCommunityIcons
+            name={iconStyle.icon as any}
+            size={24}
+            color="#FFF"
+          />
         </View>
       </View>
 
@@ -78,7 +94,9 @@ const DiaryItem = React.memo(({ item }: { item: DiarySummary }) => {
             {formattedDate}
           </Text>
           <View style={styles.badge}>
-            <Text style={styles.badgeText}>{getRelativeTime(item.createdAt)}</Text>
+            <Text style={styles.badgeText}>
+              {getRelativeTime(item.createdAt)}
+            </Text>
           </View>
         </View>
 
@@ -94,7 +112,8 @@ const DiaryItem = React.memo(({ item }: { item: DiarySummary }) => {
 
 const DiaryListScreen = () => {
   const insets = useSafeAreaInsets();
-  const { data: diaryList } = useGetDiaries();
+  const { data } = useGetDiaries();
+  const diaryList = data?.reverse() ?? [];
   const stats = useMemo(() => {
     if (!diaryList || diaryList.length === 0) {
       return { total: 0, month: 0, week: 0 };
@@ -114,7 +133,10 @@ const DiaryListScreen = () => {
     diaryList.forEach((diary) => {
       const diaryDate = new Date(diary.createdAt);
 
-      if (diaryDate.getFullYear() === currentYear && diaryDate.getMonth() === currentMonth) {
+      if (
+        diaryDate.getFullYear() === currentYear &&
+        diaryDate.getMonth() === currentMonth
+      ) {
         monthCount++;
       }
 
@@ -143,7 +165,7 @@ const DiaryListScreen = () => {
       </SharedHeader>
 
       <FlatList
-        data={diaryList}
+        data={[...diaryList?.reverse()]}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={<StatsHeader {...stats} />}
