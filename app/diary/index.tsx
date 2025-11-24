@@ -2,6 +2,7 @@ import { useGetDiaries } from "@/src/feature/diary/hooks/use-diary";
 import { DiarySummary } from "@/src/feature/diary/types";
 import SharedHeader from "@/src/shared/ui/shared-header";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import dayjs from "dayjs";
 import { useRouter } from "expo-router";
 import React, { useMemo } from "react";
 import { FlatList, StyleSheet, Text, TouchableOpacity, View } from "react-native";
@@ -62,8 +63,7 @@ const DiaryItem = React.memo(({ item }: { item: DiarySummary }) => {
     return ICON_PRESETS[index % ICON_PRESETS.length];
   }, [item.id]);
 
-  const displayTitle = item.summary.length > 15 ? item.summary.substring(0, 15) + "..." : item.summary;
-
+  const formattedDate = dayjs(item.createdAt).format("YYYY년 M월 D일");
   return (
     <TouchableOpacity style={styles.card} activeOpacity={0.9} onPress={() => router.push(`/diary/${item.id}`)}>
       <View style={styles.cardLeft}>
@@ -75,7 +75,7 @@ const DiaryItem = React.memo(({ item }: { item: DiarySummary }) => {
       <View style={styles.cardCenter}>
         <View style={styles.cardTitleRow}>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            {displayTitle}
+            {formattedDate}
           </Text>
           <View style={styles.badge}>
             <Text style={styles.badgeText}>{getRelativeTime(item.createdAt)}</Text>
