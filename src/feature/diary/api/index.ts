@@ -3,7 +3,7 @@ import type { CreateDiaryRequest, Diary, DiarySummary } from "../types";
 
 // 일기 목록 조회
 export const getDiaryList = async () => {
-  const { data } = await apiClient.get<DiarySummary[]>("/diaries");
+  const { data } = await apiClient.get<DiarySummary[]>("/diaries/all");
   return data;
 };
 
