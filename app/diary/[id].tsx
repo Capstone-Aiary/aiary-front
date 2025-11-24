@@ -29,6 +29,7 @@ const DiaryDetailScreen = () => {
   const router = useRouter();
   const { id } = useLocalSearchParams<{ id: string }>();
   const { data } = useGetDiary(id);
+  type RouterPushParam = Parameters<typeof router.push>[0];
 
   const formatDate = (dateString?: string) => {
     if (!dateString) return "2024년 11월 17일";
@@ -38,7 +39,7 @@ const DiaryDetailScreen = () => {
 
   const handleGoToReport = () => {
     if (id) {
-      router.push(`/report/${id}`);
+      router.push(`/report/${id}` as RouterPushParam);
     }
   };
 
