@@ -1,18 +1,19 @@
-// screens/RecentEmotionScreen.tsx
-import { useRecentEmotionReport } from "@/src/feature/emotion/hooks";
+import { useEmotionReportData } from "@/src/feature/emotion/hooks";
 import { EmotionScores } from "@/src/feature/emotion/type";
+import { Image } from "expo-image";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { ActivityIndicator, Dimensions, ScrollView, StyleSheet, Text, View } from "react-native";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
 const EMOTION_CONFIG: Record<string, { label: string; color: string; icon: string }> = {
-  joy: { label: "기쁨", color: "#FFB74D", icon: "☀️" },
-  calm: { label: "평온함", color: "#4DB6AC", icon: "🧘" },
-  tiredness: { label: "피로", color: "#90A4AE", icon: "🌙" },
-  anxiety: { label: "불안", color: "#B39DDB", icon: "🌊" }, // 이미지의 보라색 계열
-  sadness: { label: "슬픔", color: "#64B5F6", icon: "🧊" },
-  anger: { label: "분노", color: "#E57373", icon: "🔥" },
+  joy: { label: "기쁨", color: "#FFB74D", icon: "happy" },
+  calm: { label: "평온함", color: "#4DB6AC", icon: "tranquility" },
+  tiredness: { label: "피로", color: "#90A4AE", icon: "tired" },
+  anxiety: { label: "불안", color: "#B39DDB", icon: "anxiety" },
+  sadness: { label: "슬픔", color: "#64B5F6", icon: "sad" },
+  anger: { label: "분노", color: "#E57373", icon: "angry" },
 };
 
 const EmotionCard = ({ type, value }: { type: string; value: number }) => {
@@ -34,9 +35,10 @@ const EmotionCard = ({ type, value }: { type: string; value: number }) => {
   );
 };
 
-const RecentEmotionScreen = () => {
-  const { report, isLoading, hasDiaries, isError } = useRecentEmotionReport();
+const ReportScreen = () => {
+  const { id } = useLocalSearchParams<{ id: string }>();
 
+  const { report, isLoading, hasDiaries, isError } = useEmotionReportData(id);
   if (isLoading) {
     return (
       <View style={styles.center}>
@@ -93,7 +95,12 @@ const RecentEmotionScreen = () => {
       </View>
 
       <View style={[styles.mainCard, { backgroundColor: "#E0F7FA" }]}>
-        <Text style={{ fontSize: 40, marginBottom: 10 }}>{domConfig.icon}</Text>
+        <View style={{ marginBottom: 10 }}>
+          <Image
+            source={require(`@/assets/images/${domConfig.icon}.png`)}
+            style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
+          />
+        </View>
         <Text style={styles.mainCardTitle}>가장 강한 감정</Text>
         <Text style={[styles.mainCardEmotion, { color: domConfig.color }]}>{domConfig.label}</Text>
 
@@ -302,4 +309,4 @@ const styles = StyleSheet.create({
   subText: { fontSize: 14, color: "#888" },
 });
 
-export default RecentEmotionScreen;
+export default ReportScreen;

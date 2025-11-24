@@ -16,30 +16,31 @@ export const useEmotionReport = (diaryId: string) => {
   });
 };
 
-export const useRecentEmotionReport = () => {
+export const useEmotionReportData = (specificDiaryId?: string) => {
   const { data: diaries, isLoading: isListLoading, isError: isListError } = useGetDiaries();
 
-  const latestDiaryId = diaries && diaries.length > 0 ? diaries[0].id : null;
+  const targetId = specificDiaryId || (diaries && diaries.length > 0 ? diaries[0].id : null);
 
   const {
     data: report,
     isLoading: isReportLoading,
     isError: isReportError,
   } = useQuery<EmotionReportResponse | null>({
-    queryKey: ["emotionReport", latestDiaryId],
-    queryFn: () => getEmotionReport(latestDiaryId!), // non-null assertion safe due to enabled
-    enabled: !!latestDiaryId,
-    staleTime: 1000 * 60 * 5,
+    queryKey: ["emotionReport", targetId],
+    queryFn: () => getEmotionReport(targetId!),
+    enabled: !!targetId,
   });
 
-  const isLoading = isListLoading || (!!latestDiaryId && isReportLoading);
-  const isError = isListError || isReportError;
+  const isLoading = specificDiaryId ? isReportLoading : isListLoading || (!!targetId && isReportLoading);
+  const isError = specificDiaryId ? isReportError : isListError || isReportError;
+
+  const hasDiaries = specificDiaryId ? true : !!(diaries && diaries.length > 0);
 
   return {
     report,
-    latestDiaryId,
     isLoading,
     isError,
-    hasDiaries: !!(diaries && diaries.length > 0),
+    hasDiaries,
+    targetId,
   };
 };

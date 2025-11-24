@@ -39,12 +39,12 @@ const HomeScreen = () => {
       return;
     },
   });
-  const handleNavigation = (path: RouterPushParam) => {
+  const handleNavigation = (path: RouterPushParam | string) => {
     if (typeof path === "string" && path.startsWith("/chat")) {
       mutation.mutate({ title: "오늘의 일기" });
       return;
     }
-    router.push(path);
+    router.push(path as RouterPushParam);
   };
   const handleLogout = () => {
     logout();
@@ -108,7 +108,7 @@ const HomeScreen = () => {
             <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/home")}>
+          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/report")}>
             <View style={[styles.iconBox, { backgroundColor: "#F87171" }]}>
               <MaterialCommunityIcons name="heart" size={24} color="#fff" />
             </View>
