@@ -165,7 +165,7 @@ const DiaryListScreen = () => {
       </SharedHeader>
 
       <FlatList
-        data={[...diaryList?.reverse()]}
+        data={diaryList}
         keyExtractor={(item) => item.id}
         contentContainerStyle={styles.listContent}
         ListHeaderComponent={<StatsHeader {...stats} />}
