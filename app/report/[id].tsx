@@ -16,6 +16,15 @@ const EMOTION_CONFIG: Record<string, { label: string; color: string; icon: strin
   anger: { label: "분노", color: "#E57373", icon: "angry" },
 };
 
+const EMOTION_ICONS: Record<string, any> = {
+  happy: require("@/assets/images/happy.png"),
+  tranquility: require("@/assets/images/tranquility.png"),
+  tired: require("@/assets/images/tired.png"),
+  anxiety: require("@/assets/images/anxiety.png"),
+  sad: require("@/assets/images/sad.png"),
+  angry: require("@/assets/images/angry.png"),
+};
+
 const EmotionCard = ({ type, value }: { type: string; value: number }) => {
   const config = EMOTION_CONFIG[type] || { label: type, color: "#ccc", icon: "❓" };
   const percentage = Math.round(value * 100);
@@ -97,7 +106,7 @@ const ReportScreen = () => {
       <View style={[styles.mainCard, { backgroundColor: "#E0F7FA" }]}>
         <View style={{ marginBottom: 10 }}>
           <Image
-            source={require(`@/assets/images/${domConfig.icon}.png`)}
+            source={EMOTION_ICONS[domConfig.icon] || EMOTION_ICONS["happy"]}
             style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
           />
         </View>

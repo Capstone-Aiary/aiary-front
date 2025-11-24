@@ -23,7 +23,7 @@ const fetchUserInfo = async () => {
 
 export function RootLayoutNav() {
   const router = useRouter();
-  const segments = useSegments(); // 현재 URL 경로 파악용
+  const segments = useSegments();
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
