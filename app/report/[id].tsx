@@ -33,12 +33,11 @@ const EmotionCard = ({ type, value }: { type: string; value: number }) => {
 
   return (
     <View style={styles.smallCard}>
-      <View style={styles.iconCircle}>
-        <Image
-          source={EMOTION_ICONS[config.icon] || EMOTION_ICONS["happy"]}
-          style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
-        />
-      </View>
+      <Image
+        source={EMOTION_ICONS[config.icon] || EMOTION_ICONS["happy"]}
+        style={{ width: 64, height: 64, overflow: "hidden", borderRadius: 32 }}
+      />
+
       <Text style={styles.cardLabel}>{config.label}</Text>
 
       <View style={styles.progressBarBg}>
@@ -280,15 +279,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 5,
   },
-  iconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: "#F5F5F5",
-    justifyContent: "center",
-    alignItems: "center",
-    marginBottom: 8,
-  },
+
   cardLabel: {
     fontSize: 14,
     fontWeight: "600",
