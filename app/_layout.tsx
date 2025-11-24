@@ -64,6 +64,7 @@ export function RootLayoutNav() {
         <Stack.Screen name="diary/index" options={{ headerShown: false }} />
         <Stack.Screen name="diary/[id]" options={{ headerShown: false }} />
         <Stack.Screen name="setting" options={{ headerShown: false }} />
+        <Stack.Screen name="report" options={{ headerShown: false }} />
       </Stack>
       <StatusBar style="auto" />
     </>
