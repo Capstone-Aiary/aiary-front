@@ -13,7 +13,6 @@ export function useChatEvents(threadId: string) {
 
     const unsubscribe = chatSSEService.subscribe(threadId, (msg: Chat) => {
       queryClient.setQueryData(["chatList", threadId], (oldData: any) => {
-        console.log("sSE message received:", msg, oldData);
         if (!oldData) {
           return {
             pages: [{ items: [msg], nextCursor: null }],

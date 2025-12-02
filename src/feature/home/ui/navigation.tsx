@@ -10,7 +10,6 @@ function Navigation() {
   type RouterPushParam = Parameters<typeof router.push>[0];
   const mutation = useCreateChat({
     onSuccess: (responseData) => {
-      console.log("스레드 생성 성공 ID:", responseData);
       router.push(`/chat/${responseData.threadId}`);
       queryClient.invalidateQueries({ queryKey: ["threads"] });
     },

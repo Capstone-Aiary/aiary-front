@@ -24,7 +24,9 @@ interface ApiError {
   status: string;
 }
 
-const createDiary = async (variables: CreateDiaryVariables): Promise<CreateDiaryResponse> => {
+const createDiary = async (
+  variables: CreateDiaryVariables
+): Promise<CreateDiaryResponse> => {
   const API_ENDPOINT = "/diaries";
 
   try {
@@ -46,13 +48,15 @@ const createDiary = async (variables: CreateDiaryVariables): Promise<CreateDiary
 };
 
 export const useCreateDiary = (
-  options?: Omit<UseMutationOptions<CreateDiaryResponse, Error, CreateDiaryVariables>, "mutationFn">
+  options?: Omit<
+    UseMutationOptions<CreateDiaryResponse, Error, CreateDiaryVariables>,
+    "mutationFn"
+  >
 ) => {
   const router = useRouter();
   return useMutation<CreateDiaryResponse, Error, CreateDiaryVariables>({
     mutationFn: createDiary,
     onSuccess: (data) => {
-      console.log("data", data);
       router.push(`/diary/${data.diaryId}`);
     },
     ...options,

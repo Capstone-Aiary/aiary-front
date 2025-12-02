@@ -8,7 +8,14 @@ import "dayjs/locale/ko";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import React from "react";
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import {
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 dayjs.locale("ko");
 
@@ -30,7 +37,6 @@ const HomeScreen = () => {
   const queryClient = useQueryClient();
   const mutation = useCreateChat({
     onSuccess: (responseData) => {
-      console.log("스레드 생성 성공 ID:", responseData);
       router.push(`/chat/${responseData.threadId}`);
       queryClient.invalidateQueries({ queryKey: ["threads"] });
     },
@@ -56,7 +62,10 @@ const HomeScreen = () => {
 
       <ScrollView
         style={styles.content}
-        contentContainerStyle={[styles.scrollContent, { paddingTop: insets.top + 20 }]}
+        contentContainerStyle={[
+          styles.scrollContent,
+          { paddingTop: insets.top + 20 },
+        ]}
         showsVerticalScrollIndicator={false}
       >
         <View style={styles.header}>
@@ -68,55 +77,97 @@ const HomeScreen = () => {
           <View style={styles.greetingTop}>
             <View>
               <Text style={styles.greetingText}>안녕하세요 ✨</Text>
-              <Text style={styles.greetingSubText}>오늘도 소중한 하루를 함께해요</Text>
+              <Text style={styles.greetingSubText}>
+                오늘도 소중한 하루를 함께해요
+              </Text>
             </View>
           </View>
 
           <View style={styles.greetingBottom}>
             <View style={styles.infoRow}>
-              <MaterialCommunityIcons name="calendar-blank-outline" size={16} color="#F88010" />
+              <MaterialCommunityIcons
+                name="calendar-blank-outline"
+                size={16}
+                color="#F88010"
+              />
               <Text style={styles.infoText}>{todayFormat}</Text>
             </View>
             <View style={styles.infoRow}>
               <Text style={styles.infoText}>
-                {data?.description || "맑음"}, {data ? `${data.temperature}°C` : "정보 없음"}
+                {data?.description || "맑음"},{" "}
+                {data ? `${data.temperature}°C` : "정보 없음"}
               </Text>
             </View>
           </View>
         </View>
 
         <View style={styles.menuContainer}>
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/chat")}>
+          <TouchableOpacity
+            style={styles.menuCard}
+            onPress={() => handleNavigation("/chat")}
+          >
             <View style={[styles.iconBox, { backgroundColor: "#F88010" }]}>
-              <MaterialCommunityIcons name="chat-processing" size={24} color="#fff" />
+              <MaterialCommunityIcons
+                name="chat-processing"
+                size={24}
+                color="#fff"
+              />
             </View>
             <View style={styles.menuTextContainer}>
               <Text style={styles.menuTitle}>채팅 시작하기</Text>
-              <Text style={styles.menuDesc}>AI와 함께 오늘의 이야기를 나눠보세요</Text>
+              <Text style={styles.menuDesc}>
+                AI와 함께 오늘의 이야기를 나눠보세요
+              </Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
+            <MaterialCommunityIcons
+              name="chevron-right"
+              size={24}
+              color="#ccc"
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/diary")}>
+          <TouchableOpacity
+            style={styles.menuCard}
+            onPress={() => handleNavigation("/diary")}
+          >
             <View style={[styles.iconBox, { backgroundColor: "#EAB308" }]}>
-              <MaterialCommunityIcons name="book-open-variant" size={24} color="#fff" />
+              <MaterialCommunityIcons
+                name="book-open-variant"
+                size={24}
+                color="#fff"
+              />
             </View>
             <View style={styles.menuTextContainer}>
               <Text style={styles.menuTitle}>일기 목록</Text>
-              <Text style={styles.menuDesc}>지금까지의 소중한 기억들을 둘러보세요</Text>
+              <Text style={styles.menuDesc}>
+                지금까지의 소중한 기억들을 둘러보세요
+              </Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
+            <MaterialCommunityIcons
+              name="chevron-right"
+              size={24}
+              color="#ccc"
+            />
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.menuCard} onPress={() => handleNavigation("/report/recent")}>
+          <TouchableOpacity
+            style={styles.menuCard}
+            onPress={() => handleNavigation("/report/recent")}
+          >
             <View style={[styles.iconBox, { backgroundColor: "#F87171" }]}>
               <MaterialCommunityIcons name="heart" size={24} color="#fff" />
             </View>
             <View style={styles.menuTextContainer}>
               <Text style={styles.menuTitle}>감정 피드백</Text>
-              <Text style={styles.menuDesc}>나의 감정 변화를 한눈에 확인해보세요</Text>
+              <Text style={styles.menuDesc}>
+                나의 감정 변화를 한눈에 확인해보세요
+              </Text>
             </View>
-            <MaterialCommunityIcons name="chevron-right" size={24} color="#ccc" />
+            <MaterialCommunityIcons
+              name="chevron-right"
+              size={24}
+              color="#ccc"
+            />
           </TouchableOpacity>
         </View>
 
@@ -126,9 +177,21 @@ const HomeScreen = () => {
           end={{ x: 1, y: 0.5 }}
           style={styles.quoteCard}
         >
-          <MaterialCommunityIcons name="format-quote-open" size={24} color="#F88010" style={{ marginBottom: 8 }} />
-          <Text style={styles.quoteText}>"오늘의 작은 순간들이 모여 내{"\n"}일의 소중한 추억이 됩니다"</Text>
-          <MaterialCommunityIcons name="format-quote-close" size={24} color="#F88010" style={{ marginTop: 8 }} />
+          <MaterialCommunityIcons
+            name="format-quote-open"
+            size={24}
+            color="#F88010"
+            style={{ marginBottom: 8 }}
+          />
+          <Text style={styles.quoteText}>
+            "오늘의 작은 순간들이 모여 내{"\n"}일의 소중한 추억이 됩니다"
+          </Text>
+          <MaterialCommunityIcons
+            name="format-quote-close"
+            size={24}
+            color="#F88010"
+            style={{ marginTop: 8 }}
+          />
         </LinearGradient>
 
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>

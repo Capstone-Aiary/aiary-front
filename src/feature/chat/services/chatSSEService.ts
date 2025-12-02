@@ -10,7 +10,6 @@ class ChatSSEService {
 
   async startStream(threadId: string): Promise<void> {
     if (this.controllers.has(threadId)) {
-      console.log("⚠️ [SSE] 이미 연결된 스트림입니다:", threadId);
       return;
     }
 
@@ -27,7 +26,6 @@ class ChatSSEService {
     }
 
     const url = `${baseUrl}/chat/stream?threadId=${threadId}`;
-    console.log("🚀 [SSE] 연결 시작:", url);
 
     try {
       await fetchEventSource(url, {
@@ -40,7 +38,6 @@ class ChatSSEService {
 
         async onopen(response) {
           if (response.ok) {
-            console.log("✅ [SSE] 연결 성공 (200 OK)");
             return;
           } else if (response.status === 401 || response.status === 403) {
             console.error("🚫 [SSE] 인증 실패 (401/403)");
@@ -53,7 +50,6 @@ class ChatSSEService {
         onmessage: (event) => {
           try {
             if (event.event === "done") {
-              console.log("🏁 [SSE] 스트림 완료 (Done)");
               this.closeStream(threadId);
               return;
             }
@@ -99,7 +95,6 @@ class ChatSSEService {
         },
 
         onclose: () => {
-          console.log("🔒 [SSE] 연결이 서버에 의해 닫힘");
         },
       });
     } catch (error) {
@@ -114,7 +109,6 @@ class ChatSSEService {
       controller.abort();
       this.controllers.delete(threadId);
       this.pendingMessages.delete(threadId);
-      console.log("✂️ [SSE] 연결 종료 및 리소스 정리:", threadId);
     }
   }
 

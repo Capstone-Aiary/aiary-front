@@ -1,15 +1,18 @@
 import apiClient from "@/src/shared/api/axios";
-import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+} from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
-import { ActivityIndicator, View } from "react-native";
-
+import QRCode from "qrcode";
+import { useEffect, useRef } from "react";
+import { ActivityIndicator, Platform, View } from "react-native";
 const queryClient = new QueryClient();
 
 const fetchUserInfo = async () => {
   const token = localStorage.getItem("accessToken");
-
   if (!token) return null;
 
   try {
@@ -24,6 +27,7 @@ const fetchUserInfo = async () => {
 export function RootLayoutNav() {
   const router = useRouter();
   const segments = useSegments();
+  const hasLogged = useRef(false);
 
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
@@ -33,9 +37,40 @@ export function RootLayoutNav() {
   });
 
   useEffect(() => {
+    if (Platform.OS === "web" && !hasLogged.current) {
+      const targetUrl = "https://aiary-front.vercel.app";
+
+      QRCode.toDataURL(targetUrl, (err, url) => {
+        if (err) return;
+
+        console.log(
+          "%c ",
+          `
+          font-size: 1px;
+          padding: 100px; 
+          background-image: url(${url});
+          background-size: contain;
+          background-repeat: no-repeat;
+          color: transparent;
+          `
+        );
+        console.log(
+          `%c 접속 링크: ${targetUrl}`,
+          "font-weight: bold; font-size: 14px; color: #F88010;"
+        );
+      });
+
+      hasLogged.current = true;
+    }
+  }, []);
+
+  useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup = segments[0] === "home" || segments[0] === "login" || segments[0] === "signup";
+    const inAuthGroup =
+      segments[0] === "home" ||
+      segments[0] === "login" ||
+      segments[0] === "signup";
 
     if (!user && !inAuthGroup) {
       router.replace("/login");
