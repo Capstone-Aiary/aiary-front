@@ -15,31 +15,76 @@ import {
 
 export default function SignUpScreen() {
   const router = useRouter();
+
+  // 입력 값 상태
   const [nickname, setNickname] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(""); // UI상 '유저이름'
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  // 에러 메시지 상태 관리
+  const [errors, setErrors] = useState({
+    nickname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+
   const { mutate: signUp, isPending } = useSignUp();
 
+  // 유효성 검사 함수
+  const validate = () => {
+    let isValid = true;
+    const newErrors = {
+      nickname: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    };
+
+    if (!nickname.trim()) {
+      newErrors.nickname = "닉네임을 입력해주세요.";
+      isValid = false;
+    }
+
+    if (!email.trim()) {
+      newErrors.email = "유저이름을 입력해주세요.";
+      isValid = false;
+    }
+
+    if (!password.trim()) {
+      newErrors.password = "비밀번호를 입력해주세요.";
+      isValid = false;
+    } else if (password.length < 6) {
+      newErrors.password = "비밀번호는 6자 이상이어야 합니다.";
+      isValid = false;
+    }
+
+    if (!confirmPassword.trim()) {
+      newErrors.confirmPassword = "비밀번호 확인을 입력해주세요.";
+      isValid = false;
+    } else if (password !== confirmPassword) {
+      newErrors.confirmPassword = "비밀번호가 일치하지 않습니다.";
+      isValid = false;
+    }
+
+    setErrors(newErrors);
+    return isValid;
+  };
+
   const handleSignUp = () => {
-    if (!nickname || !email || !password || !confirmPassword) {
-      Alert.alert("입력 오류", "모든 필드를 채워주세요.");
-      return;
-    }
-    if (password !== confirmPassword) {
-      Alert.alert("비밀번호 오류", "비밀번호와 비밀번호 확인이 일치하지 않습니다.");
-      return;
-    }
+    if (!validate()) return;
 
     signUp(
       { nickname, user_name: email, password },
       {
         onSuccess: () => {
-          Alert.alert("회원가입 성공", "환영합니다!");
-          router.replace("/login");
+          Alert.alert("회원가입 성공", "환영합니다!", [
+            { text: "확인", onPress: () => router.replace("/login") },
+          ]);
         },
         onError: (error) => {
+          // 서버 에러는 Alert 혹은 상단 토스트 메시지 등으로 처리하는 것이 일반적입니다.
           Alert.alert("회원가입 실패", error.message || "다시 시도해주세요.");
         },
       }
@@ -50,14 +95,31 @@ export default function SignUpScreen() {
     router.replace("/login");
   };
 
+  const handleChange = (
+    field: keyof typeof errors,
+    value: string,
+    setter: (val: string) => void
+  ) => {
+    setter(value);
+    if (errors[field]) {
+      setErrors((prev) => ({ ...prev, [field]: "" }));
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Stack.Screen options={{ headerShown: false }} />
 
       <View style={styles.topCircle} />
 
-      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
-        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+      >
+        <ScrollView
+          contentContainerStyle={styles.scrollContainer}
+          showsVerticalScrollIndicator={false}
+        >
           <View style={styles.headerContainer}>
             <Text style={styles.title}>회원가입</Text>
             <Text style={styles.subtitle}>당신의 이야기를 시작하세요</Text>
@@ -66,47 +128,75 @@ export default function SignUpScreen() {
           <View style={styles.formContainer}>
             <Text style={styles.label}>닉네임</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, errors.nickname ? styles.inputError : null]}
               placeholder="닉네임을 입력해주세요"
               placeholderTextColor="#aaa"
               value={nickname}
-              onChangeText={setNickname}
+              onChangeText={(text) =>
+                handleChange("nickname", text, setNickname)
+              }
               autoCapitalize="none"
             />
+            {errors.nickname ? (
+              <Text style={styles.errorText}>{errors.nickname}</Text>
+            ) : null}
 
             <Text style={styles.label}>유저이름</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, errors.email ? styles.inputError : null]}
               placeholder="유저이름을 입력해주세요"
               placeholderTextColor="#aaa"
               value={email}
-              onChangeText={setEmail}
-              keyboardType="email-address"
+              onChangeText={(text) => handleChange("email", text, setEmail)}
               autoCapitalize="none"
+              // keyboardType="email-address" // 유저이름이 이메일 형식이 아니라면 제거 가능
             />
+            {errors.email ? (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            ) : null}
 
+            {/* 비밀번호 필드 */}
             <Text style={styles.label}>비밀번호</Text>
             <TextInput
-              style={styles.input}
+              style={[styles.input, errors.password ? styles.inputError : null]}
               placeholder="비밀번호를 입력해주세요"
               placeholderTextColor="#aaa"
               value={password}
-              onChangeText={setPassword}
+              onChangeText={(text) =>
+                handleChange("password", text, setPassword)
+              }
               secureTextEntry
             />
+            {errors.password ? (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            ) : null}
 
             <Text style={styles.label}>비밀번호 확인</Text>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                errors.confirmPassword ? styles.inputError : null,
+              ]}
               placeholder="비밀번호를 다시 입력해주세요"
               placeholderTextColor="#aaa"
               value={confirmPassword}
-              onChangeText={setConfirmPassword}
+              onChangeText={(text) =>
+                handleChange("confirmPassword", text, setConfirmPassword)
+              }
               secureTextEntry
             />
+            {errors.confirmPassword ? (
+              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
+            ) : null}
 
-            <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp} disabled={isPending}>
-              <Text style={styles.primaryButtonText}>시작하기</Text>
+            <TouchableOpacity
+              style={styles.primaryButton}
+              onPress={handleSignUp}
+              disabled={isPending}
+            >
+              <Text style={styles.primaryButtonText}>
+                {isPending ? "처리중..." : "시작하기"}
+              </Text>
             </TouchableOpacity>
 
             <View style={styles.loginPrompt}>
@@ -126,7 +216,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#FFFBF2",
-    overflow: "hidden",
   },
   topCircle: {
     position: "absolute",
@@ -183,6 +272,16 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 3,
     elevation: 2,
+  },
+  inputError: {
+    borderColor: "#FF3B30",
+    borderWidth: 1,
+  },
+  errorText: {
+    color: "#FF3B30",
+    fontSize: 12,
+    marginTop: 4,
+    marginLeft: 4,
   },
   primaryButton: {
     width: "100%",

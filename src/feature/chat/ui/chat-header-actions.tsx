@@ -7,9 +7,13 @@ interface ChatHeaderActionsProps {
   date?: string;
   onNewChat?: () => void;
   onCreateDiary?: () => void;
+  isPending: boolean;
 }
 
-const ChatHeaderActions = ({ onCreateDiary }: ChatHeaderActionsProps) => {
+const ChatHeaderActions = ({
+  onCreateDiary,
+  isPending,
+}: ChatHeaderActionsProps) => {
   return (
     <View style={styles.container}>
       <TouchableOpacity onPress={onCreateDiary} style={styles.touchable}>
@@ -20,10 +24,19 @@ const ChatHeaderActions = ({ onCreateDiary }: ChatHeaderActionsProps) => {
           style={styles.banner}
         >
           <View style={styles.row}>
-            <MaterialCommunityIcons name="book-open-page-variant" size={20} color="#fff" style={{ marginRight: 8 }} />
-            <Text style={styles.bannerTitle}>대화를 일기로 생성하기</Text>
+            <MaterialCommunityIcons
+              name="book-open-page-variant"
+              size={20}
+              color="#fff"
+              style={{ marginRight: 8 }}
+            />
+            <Text style={styles.bannerTitle}>
+              {isPending ? "일기 생성 중.." : "대화를 일기로 생성하기"}
+            </Text>
           </View>
-          <Text style={styles.bannerSubtitle}>AI가 우리의 대화를 바탕으로 감성적인 일기를 작성해드려요</Text>
+          <Text style={styles.bannerSubtitle}>
+            AI가 우리의 대화를 바탕으로 감성적인 일기를 작성해드려요
+          </Text>
         </LinearGradient>
       </TouchableOpacity>
     </View>

@@ -15,10 +15,15 @@ function ChatRoomHeader() {
     mutation.mutate({ threadId: id });
   };
 
+  mutation.isPending;
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContent}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.closeButton}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={styles.closeButton}
+        >
           <MaterialCommunityIcons name="close" size={24} color="#333" />
         </TouchableOpacity>
 
@@ -30,7 +35,10 @@ function ChatRoomHeader() {
         <View style={{ width: 24 }} />
       </View>
 
-      <ChatHeaderActions onCreateDiary={handleSubmitDiary} />
+      <ChatHeaderActions
+        onCreateDiary={handleSubmitDiary}
+        isPending={mutation.isPending}
+      />
     </View>
   );
 }
