@@ -1,9 +1,5 @@
 import apiClient from "@/src/shared/api/axios";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, useQuery } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import QRCode from "qrcode";
@@ -54,10 +50,7 @@ export function RootLayoutNav() {
           color: transparent;
           `
         );
-        console.log(
-          `%c 접속 링크: ${targetUrl}`,
-          "font-weight: bold; font-size: 14px; color: #F88010;"
-        );
+        console.log(`%c 접속 링크: ${targetUrl}`, "font-weight: bold; font-size: 14px; color: #F88010;");
       });
 
       hasLogged.current = true;
@@ -67,13 +60,10 @@ export function RootLayoutNav() {
   useEffect(() => {
     if (isLoading) return;
 
-    const inAuthGroup =
-      segments[0] === "home" ||
-      segments[0] === "login" ||
-      segments[0] === "signup";
+    const inAuthGroup = segments[0] === "home" || segments[0] === "login" || segments[0] === "signup";
 
     if (!user && !inAuthGroup) {
-      router.replace("/login");
+      router.replace("/");
     } else if (user && inAuthGroup) {
       router.replace("/home");
     }
