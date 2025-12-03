@@ -2,7 +2,6 @@ import { useSignUp } from "@/src/feature/auth/hooks/auth";
 import { Stack, useRouter } from "expo-router";
 import React, { useState } from "react";
 import {
-  Alert,
   KeyboardAvoidingView,
   Platform,
   ScrollView,
@@ -79,13 +78,11 @@ export default function SignUpScreen() {
       { nickname, user_name: email, password },
       {
         onSuccess: () => {
-          Alert.alert("회원가입 성공", "환영합니다!", [
-            { text: "확인", onPress: () => router.replace("/login") },
-          ]);
+          alert("회원가입 성공\n\n환영합니다!");
+          router.replace("/login");
         },
         onError: (error) => {
-          // 서버 에러는 Alert 혹은 상단 토스트 메시지 등으로 처리하는 것이 일반적입니다.
-          Alert.alert("회원가입 실패", error.message || "다시 시도해주세요.");
+          alert("회원가입 실패" + (error?.message ? `\n\n${error.message}` : ""));
         },
       }
     );
@@ -95,11 +92,7 @@ export default function SignUpScreen() {
     router.replace("/login");
   };
 
-  const handleChange = (
-    field: keyof typeof errors,
-    value: string,
-    setter: (val: string) => void
-  ) => {
+  const handleChange = (field: keyof typeof errors, value: string, setter: (val: string) => void) => {
     setter(value);
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: "" }));
@@ -112,14 +105,8 @@ export default function SignUpScreen() {
 
       <View style={styles.topCircle} />
 
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-      >
-        <ScrollView
-          contentContainerStyle={styles.scrollContainer}
-          showsVerticalScrollIndicator={false}
-        >
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS === "ios" ? "padding" : "height"}>
+        <ScrollView contentContainerStyle={styles.scrollContainer} showsVerticalScrollIndicator={false}>
           <View style={styles.headerContainer}>
             <Text style={styles.title}>회원가입</Text>
             <Text style={styles.subtitle}>당신의 이야기를 시작하세요</Text>
@@ -132,14 +119,10 @@ export default function SignUpScreen() {
               placeholder="닉네임을 입력해주세요"
               placeholderTextColor="#aaa"
               value={nickname}
-              onChangeText={(text) =>
-                handleChange("nickname", text, setNickname)
-              }
+              onChangeText={(text) => handleChange("nickname", text, setNickname)}
               autoCapitalize="none"
             />
-            {errors.nickname ? (
-              <Text style={styles.errorText}>{errors.nickname}</Text>
-            ) : null}
+            {errors.nickname ? <Text style={styles.errorText}>{errors.nickname}</Text> : null}
 
             <Text style={styles.label}>유저이름</Text>
             <TextInput
@@ -151,9 +134,7 @@ export default function SignUpScreen() {
               autoCapitalize="none"
               // keyboardType="email-address" // 유저이름이 이메일 형식이 아니라면 제거 가능
             />
-            {errors.email ? (
-              <Text style={styles.errorText}>{errors.email}</Text>
-            ) : null}
+            {errors.email ? <Text style={styles.errorText}>{errors.email}</Text> : null}
 
             {/* 비밀번호 필드 */}
             <Text style={styles.label}>비밀번호</Text>
@@ -162,41 +143,24 @@ export default function SignUpScreen() {
               placeholder="비밀번호를 입력해주세요"
               placeholderTextColor="#aaa"
               value={password}
-              onChangeText={(text) =>
-                handleChange("password", text, setPassword)
-              }
+              onChangeText={(text) => handleChange("password", text, setPassword)}
               secureTextEntry
             />
-            {errors.password ? (
-              <Text style={styles.errorText}>{errors.password}</Text>
-            ) : null}
+            {errors.password ? <Text style={styles.errorText}>{errors.password}</Text> : null}
 
             <Text style={styles.label}>비밀번호 확인</Text>
             <TextInput
-              style={[
-                styles.input,
-                errors.confirmPassword ? styles.inputError : null,
-              ]}
+              style={[styles.input, errors.confirmPassword ? styles.inputError : null]}
               placeholder="비밀번호를 다시 입력해주세요"
               placeholderTextColor="#aaa"
               value={confirmPassword}
-              onChangeText={(text) =>
-                handleChange("confirmPassword", text, setConfirmPassword)
-              }
+              onChangeText={(text) => handleChange("confirmPassword", text, setConfirmPassword)}
               secureTextEntry
             />
-            {errors.confirmPassword ? (
-              <Text style={styles.errorText}>{errors.confirmPassword}</Text>
-            ) : null}
+            {errors.confirmPassword ? <Text style={styles.errorText}>{errors.confirmPassword}</Text> : null}
 
-            <TouchableOpacity
-              style={styles.primaryButton}
-              onPress={handleSignUp}
-              disabled={isPending}
-            >
-              <Text style={styles.primaryButtonText}>
-                {isPending ? "처리중..." : "시작하기"}
-              </Text>
+            <TouchableOpacity style={styles.primaryButton} onPress={handleSignUp} disabled={isPending}>
+              <Text style={styles.primaryButtonText}>{isPending ? "처리중..." : "시작하기"}</Text>
             </TouchableOpacity>
 
             <View style={styles.loginPrompt}>
