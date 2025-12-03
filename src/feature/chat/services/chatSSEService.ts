@@ -5,7 +5,7 @@ type Callback = (msg: Chat) => void;
 
 class ChatSSEService {
   private subscribers = new Map<string, Set<Callback>>();
-  private controllers = new Map<string, AbortController>(); // EventSource 대신 컨트롤러로 관리
+  private controllers = new Map<string, AbortController>();
   private pendingMessages = new Map<string, Chat>();
 
   async startStream(threadId: string): Promise<void> {
@@ -26,6 +26,9 @@ class ChatSSEService {
     }
 
     const url = `${baseUrl}/chat/stream?threadId=${threadId}`;
+
+    const startTime = performance.now();
+    let isFirstTokenReceived = false;
 
     try {
       await fetchEventSource(url, {
@@ -58,6 +61,12 @@ class ChatSSEService {
               const chunk = JSON.parse(event.data);
 
               if (chunk.text) {
+                if (!isFirstTokenReceived) {
+                  const ttfb = performance.now() - startTime;
+                  console.log(`⏱️ [Telemetry] TTFB (Latency): ${ttfb.toFixed(2)}ms`);
+                  isFirstTokenReceived = true;
+                }
+
                 let currentMessage = this.pendingMessages.get(threadId);
 
                 if (!currentMessage) {
@@ -88,14 +97,17 @@ class ChatSSEService {
 
         onerror: (err: any) => {
           console.error("🔥 [SSE] 에러 발생:", err);
+
           if (err.message === "Unauthorized") {
             this.closeStream(threadId);
             throw err;
           }
+
+          console.log("🔄 [SSE] 일시적 네트워크 오류. 1초 후 재연결을 시도합니다...");
+          return 1000;
         },
 
-        onclose: () => {
-        },
+        onclose: () => {},
       });
     } catch (error) {
       console.error("❌ [SSE] Fetch 실행 중 에러:", error);
@@ -109,6 +121,7 @@ class ChatSSEService {
       controller.abort();
       this.controllers.delete(threadId);
       this.pendingMessages.delete(threadId);
+      console.log(`🛑 [SSE] Stream closed for thread: ${threadId}`);
     }
   }
 
