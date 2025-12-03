@@ -12,17 +12,13 @@ function WebChatInput() {
 
   useKeyboardResizeEffect();
 
-  // 높이 조절 함수 (입력 시 및 초기화 시 사용)
+  // 높이 조절 함수
   const adjustHeight = useCallback(() => {
     const elem = textareaRef.current;
     if (!elem) return;
 
-    // 1. 높이를 잠시 auto로 줄여서 지워졌을 때 줄어들게 함
     elem.style.height = "auto";
-
-    // 2. 스크롤 높이만큼 설정하되, 최대 높이(약 3~4줄) 제한
-    // 24px(line-height) * 3줄 = 72px 정도가 적당
-    const maxHeight = 80;
+    const maxHeight = 100;
     elem.style.height = `${Math.min(elem.scrollHeight, maxHeight)}px`;
   }, []);
 
@@ -35,12 +31,14 @@ function WebChatInput() {
     const messageContent = chat.trim();
     if (!messageContent) return;
 
-    // 전송 후 초기화
     setChat("");
 
-    // 높이도 초기화 (React State 업데이트 후 DOM 반영을 위해 setTimeout 사용 가능하나, 보통은 바로 적용됨)
+    // 전송 후 높이 초기화 (기본 높이로 돌아가게 설정)
     if (textareaRef.current) {
-      textareaRef.current.style.height = "24px"; // 기본 1줄 높이로 강제 리셋
+      // 패딩이 포함된 초기 높이로 설정 (lineHeight 24px + paddingY 24px = 48px)
+      // 혹은 'auto'로 두면 placeholder 높이에 맞춰짐
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.focus();
     }
 
     try {
@@ -55,61 +53,62 @@ function WebChatInput() {
       display: "flex",
       width: "100%",
       minHeight: 80,
-      alignItems: "center", // 수직 중앙 정렬
+      alignItems: "center",
       backgroundColor: "#FFFBF2",
-      padding: "12px 20px", // 패딩을 좀 더 넉넉하게 수정
+      padding: "10px 16px",
       boxSizing: "border-box",
     },
     inputContainer: {
       position: "relative",
       display: "flex",
       flex: 1,
-      alignItems: "flex-end", // 텍스트가 늘어날 때 버튼은 아래에 고정되거나 중앙에 오도록 (취향따라 center로 변경 가능)
-      borderRadius: "24px", // 더 둥글게
+      alignItems: "center",
+      borderRadius: "30px",
       backgroundColor: "#fff",
-      padding: "12px 12px 12px 20px", // 내부 패딩 확장 (상/하/좌/우)
+      // 컨테이너 패딩은 최소화 (버튼과의 간격 정도만)
+      padding: "6px 8px 6px 6px",
       boxSizing: "border-box",
       border: "1px solid #E5E5E5",
-      boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.05)", // 그림자 살짝 부드럽게
+      boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.05)",
     },
     chatInput: {
       flex: 1,
       resize: "none",
-      overflowY: "auto", // 내용 넘치면 스크롤
+      overflowY: "auto",
       backgroundColor: "transparent",
       margin: 0,
-      padding: 0,
       color: "#333",
       fontSize: "16px",
-      lineHeight: "24px", // 줄 간격 확보
+      lineHeight: "24px",
       border: "none",
-      outline: "none", // 아웃라인 제거
+      outline: "none",
       fontFamily: "inherit",
       scrollbarWidth: "none",
-      maxHeight: "80px", // CSS단에서도 최대 높이 제한
-      height: "24px", // 초기 높이 (line-height와 맞춤)
+      boxSizing: "border-box",
+      padding: "12px 0px 12px 16px",
+      maxHeight: "100px",
     },
     sendButton: {
       display: "flex",
-      height: 32, // 버튼 크기 살짝 조정
-      width: 32,
+      height: 36,
+      width: 36,
       flexShrink: 0,
       alignItems: "center",
       justifyContent: "center",
       borderRadius: "50%",
-      backgroundColor: chat.trim() ? "#F88010" : "#E0E0E0", // 입력 없으면 회색 처리 (UX 개선)
+      backgroundColor: chat.trim() ? "#F88010" : "#E0E0E0",
       transition: "background-color 0.2s",
-      marginLeft: 12, // 간격 넓힘
+      marginLeft: 8, // 인풋과의 간격
       border: "none",
       cursor: "pointer",
       padding: 0,
     },
     sendIcon: {
       color: "white",
-      fontSize: "14px",
+      fontSize: "15px",
       fontWeight: "600",
-      marginTop: "2px", // 시각적 중앙 보정
       marginLeft: "2px",
+      marginTop: "1px",
     },
   };
 
@@ -131,7 +130,7 @@ function WebChatInput() {
           onClick={handleSend}
           style={styles.sendButton}
           aria-label="Send message"
-          disabled={!chat.trim()} // 내용 없으면 클릭 방지
+          disabled={!chat.trim()}
         >
           <div style={styles.sendIcon}>➤</div>
         </button>
